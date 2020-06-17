@@ -1,10 +1,10 @@
-const Fastify = require('fastify');
-const AutoLoad = require('fastify-autoload');
-const jwt = require('fastify-jwt');
+const Fastify = require("fastify");
+const AutoLoad = require("fastify-autoload");
+const jwt = require("fastify-jwt");
 
-const nconf = require('nconf');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const nconf = require("nconf");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const createRequestId = () => uuidv4();
 
@@ -15,51 +15,52 @@ const createServer = (options) => {
     genReqId: createRequestId,
     ignoreTrailingSlash: true,
     logger: {
-      level: logSeverity
-    }
+      level: logSeverity,
+    },
   });
 
-  server.register(require('fastify-auth0-verify'), {
-    audience: nconf.get('keys.auth0.audience'),
-    domain: nconf.get('keys.auth0.domain'),
-    secret: nconf.get('keys.auth0.clientSecret')
+  server.register(require("fastify-auth0-verify"), {
+    audience: nconf.get("keys.auth0.audience"),
+    domain: nconf.get("keys.auth0.domain"),
+    secret: nconf.get("keys.auth0.clientSecret"),
   });
 
-  server.register(require('fastify-cors'), {
+  server.register(require("fastify-cors"), {
     origin: (origin, cb) => {
-      if (/localhost/.test(origin)) {
+      console.log({ origin })
+      if (/localhost/.test(origin) || origin === undefined) {
         //  Request from localhost will pass
-        cb(null, true)
-        return
+        cb(null, true);
+        return;
       }
-      cb(new Error("Not allowed"), false)
-    }
-  })
+      cb(new Error("Not allowed"), false);
+    },
+  });
 
   server.register(AutoLoad, {
-    dir: path.join(__dirname, 'api', 'routes')
+    dir: path.join(__dirname, "api", "routes"),
   });
 
-  server.addHook('onRequest', async (request, reply) => {
+  server.addHook("onRequest", async (request, reply) => {
     try {
-      await request.jwtVerify()
+      await request.jwtVerify();
     } catch (err) {
-      reply.send(err)
+      reply.send(err);
     }
   });
 
   // start the server
-  server.listen(8080, '0.0.0.0', (err) => {
+  server.listen(8080, "0.0.0.0", (err) => {
     if (err) {
       server.log.error(err);
       console.log(err);
       process.exit(1);
     }
 
-    server.log.info('Server Started');
+    server.log.info("Server Started");
   });
-}
+};
 
 module.exports = {
-  createServer
-}
+  createServer,
+};
