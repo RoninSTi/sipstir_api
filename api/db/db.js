@@ -1,7 +1,11 @@
 const nconf = require('nconf');
 const Sequelize = require('sequelize');
 
-const { AccountUser } = require('../models/AccountUser');
+const { Account } = require('../models/Account');
+const { AccountMember } = require('../models/AccountMember');
+const { Location } = require('../models/Location');
+const { Member } = require('../models/Member');
+const { User } = require('../models/User');
 
 const DB = nconf.get('db.mysql.database');
 const DIALECT = nconf.get('db.mysql.dialect');
@@ -16,8 +20,16 @@ const sequelize = new Sequelize(DB, USER, PASSWORD, {
 });
 
 const models = {
-  AccountUser: AccountUser.init(sequelize, Sequelize)
+  Account: Account.init(sequelize, Sequelize),
+  AccountMember: AccountMember.init(sequelize, Sequelize),
+  Location: Location.init(sequelize, Sequelize),
+  Member: Member.init(sequelize, Sequelize),
+  User: User.init(sequelize, Sequelize)
 }
+
+Object.values(models)
+  .filter(model => typeof model.associate === "function")
+  .forEach(model => model.associate(models));
 
 module.exports = {
   ...models,

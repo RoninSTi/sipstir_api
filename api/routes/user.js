@@ -2,6 +2,6 @@ const { validateGetCheckUsername, validatePostUser } = require('../validations/u
 const { getCheckUsername, postUser } = require('../controllers/userController');
 
 module.exports = async (fastify) => {
-  fastify.get('/user/check/:username', validateGetCheckUsername, getCheckUsername);
+  fastify.get('/user/checkusername/:username', validateGetCheckUsername, getCheckUsername);
   fastify.post('/user', validatePostUser, postUser);
 };

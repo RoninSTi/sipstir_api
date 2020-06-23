@@ -1,54 +1,71 @@
-// const bcrypt = require('bcrypt-nodejs');
-const mongoose = require('mongoose');
+const { Model } = require('sequelize');
+const { getPlaceDetails } = require('../adaptors/googlePlaceAdaptor');
 
-const locationSchema = new mongoose.Schema({
-  accountId: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
-  name: String,
-  photo: {
-    height: Number,
-    photoReference: String,
-    width: Number
-  },
-  placeId: {
-    type: String,
-    required: true
-  },
-  vicinity: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, {
-  collection: 'Locations'
-});
-
-const Location = mongoose.model('Location', locationSchema);
-
-class UserResponse {
-  constructor({
-    accountId, name, photo, id, placeId, vicinity, createdAt
-  }) {
-    this.accounts = accounts;
-    this.avatar = avatar;
-    this.createdAt = createdAt;
-    this.email = email;
-    this.id = id;
-    this.pushToken = pushToken;
-    this.role = role;
-    this.username = username;
+class Location extends Model {
+  static init(sequelize, DataTypes) {
+    return super.init({
+      name: DataTypes.STRING,
+      photo: {
+        type: DataTypes.STRING,
+        get: function () {
+          return JSON.parse(this.getDataValue('photo'));
+        },
+        set: function (value) {
+          this.setDataValue('photo', JSON.stringify(value));
+        }
+      },
+      geometry: {
+        type: DataTypes.STRING,
+        get: function () {
+          return JSON.parse(this.getDataValue('geometry'));
+        },
+        set: function (value) {
+          this.setDataValue('geometry', JSON.stringify(value));
+        }
+      },
+      placeId: DataTypes.STRING,
+      vicinity: DataTypes.STRING
+    }, {
+      sequelize,
+      timestamps: true
+    })
   }
-}
 
-class UsernameCheckResponse {
-  constructor({
-    usernameExists
-  }) {
-    this.usernameExists = usernameExists;
+  static async createLocationFromPlaceId(placeId) {
+    const location = await this.findOne({
+      where: {
+        placeId,
+      }
+    })
+
+    if (location) return location;
+
+    try {
+      const response = await getPlaceDetails(placeId);
+      const responseJSON = await response.json();
+
+      const { result: googlePlace } = responseJSON;
+
+      const { html_attributions, ...photoData } = googlePlace.photos[0];
+
+      const locationData = {
+        name: googlePlace.name,
+        geometry: googlePlace.geometry,
+        photo: photoData,
+        placeId,
+        vicinity: googlePlace.vicinity
+      };
+
+      const location = await this.create(locationData);
+
+      return location;
+    } catch (error) {
+      console.log({ error });
+    }
   }
 }
 
 module.exports = {
-  User,
-  UserResponse,
-  UsernameCheckResponse
+  Location
 }
+

@@ -1,57 +1,44 @@
-// const bcrypt = require('bcrypt-nodejs');
-const mongoose = require('mongoose');
+const { Model } = require('sequelize');
 
-const accountSchema = new mongoose.Schema({
-  address: {
-    admin: String,
-    country: String,
-    locality: String,
-    postalCode: String,
-    street1: String,
-    street2: String
-  },
-  avatar: String,
-  billingAddress: {
-    admin: String,
-    country: String,
-    locality: String,
-    postalCode: String,
-    street1: String,
-    street2: String
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  googlePlaceId: String,
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
-}, {
-  collection: 'Accounts'
-});
+class Account extends Model {
+  static init(sequelize, DataTypes) {
+    return super.init({
+      name: DataTypes.STRING,
+    }, {
+      sequelize,
+      timestamps: true
+    })
+  }
 
-const Account = mongoose.model('Account', accountSchema);
+  static associate(models) {
+    this.memberAssociation = models.Account.belongsToMany(models.Member, {
+      through: 'AccountMember',
+      as: 'members',
+      foreignKey: 'accountId',
+      otherKey: 'memberId',
+    });
 
-class AccountResponse {
-  constructor({
-    createdAt, googlePlaceId, id, name
-  }) {
-    this.createdAt = createdAt;
-    this.id = id;
-    this.googlePlaceId = googlePlaceId;
-    this.name = name;
+    this.locationAssociation = models.Account.belongsTo(models.Location, {
+      as: 'location',
+      foreignKey: 'locationId'
+    });
+
+    this.userAssociation = models.Account.belongsTo(models.User, {
+      as: 'user',
+      foreignKey: 'userId'
+    });
+  }
+
+  static async getSingle(id) {
+    const account = await this.findByPk(id, { include: [{ all: true, nested: true }] });
+
+    if (!account) return {}
+
+    return account.toJSON();
   }
 }
 
 module.exports = {
-  Account,
-  AccountResponse
+  Account
 }
+

@@ -1,19 +1,17 @@
 const { Model } = require('sequelize');
 
-class AccountUser extends Model {
+class AccountMember extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
-      email: {
-        type: DataTypes.STRING,
-        unique: true
-      }
+      accountId: DataTypes.INTEGER,
+      memberId: DataTypes.INTEGER
     }, {
       sequelize,
-      timeStamps: true
+      timestamps: false
     })
   }
 }
 
 module.exports = {
-  AccountUser
+  AccountMember
 }

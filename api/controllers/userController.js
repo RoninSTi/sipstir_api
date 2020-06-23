@@ -1,28 +1,37 @@
-const { User, UserResponse, UsernameCheckResponse } = require('../models/User');
+const { Account } = require('../models/Account');
+const { User } = require('../models/User');
 
 const getCheckUsername = async (req, res) => {
   const { username } = req.params;
 
   try {
-    const existingUser = await User.findOne({ username: username.toLowerCase() }).exec();
+    const existingUser = await User.findOne({
+      where: {
+        username
+      }
+    })
 
-    res.send(new UsernameCheckResponse({ usernameExists: !!existingUser }))
+    const usernameTaken = !!existingUser
+
+    res.send({ isAvailable: !usernameTaken })
   } catch (error) {
     res.send(error)
   }
 }
 
 const postUser = async (req, res) => {
-  const { avatar, email, username } = req.body;
-  try {
-    const user = new User({
-      avatar,
-      email,
-      username
-    });
+  const { accountId, ...userData } = req.body;
 
-    const newUser = await user.save();
-    res.send(new UserResponse({...newUser}));
+  try {
+    const user = await User.create({ ...userData })
+
+    if (accountId) {
+      const account = await Account.findByPk(accountId)
+
+      await account.setUser(user)
+    }
+
+    res.send(user.toJSON());
   } catch (error) {
     res.send(error);
   }
@@ -31,4 +40,4 @@ const postUser = async (req, res) => {
 module.exports = {
   getCheckUsername,
   postUser
-}
+};

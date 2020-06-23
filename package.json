@@ -18,19 +18,20 @@
   },
   "homepage": "https://gitlab.com/barsnap-engineering/barsnap-api#readme",
   "dependencies": {
-    "bcrypt-nodejs": "0.0.3",
+    "aws-sdk": "^2.701.0",
     "fastify": "^2.14.1",
     "fastify-auth0-verify": "^0.2.0",
     "fastify-autoload": "^1.2.2",
     "fastify-cors": "^3.0.3",
-    "fastify-jwt": "^1.4.0",
+    "fastify-plugin": "^1.6.1",
     "fastify-sequelize": "^1.0.4",
     "lodash": "^4.17.15",
-    "mongoose": "^5.9.18",
     "mysql2": "^2.1.0",
     "nconf": "^0.10.0",
+    "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
     "sequelize": "^5.21.13",
+    "url-join": "^4.0.1",
     "uuid": "^8.1.0"
   }
 }
