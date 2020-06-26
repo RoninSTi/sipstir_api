@@ -5,6 +5,8 @@ const { Account } = require('../models/Account');
 const { AccountMember } = require('../models/AccountMember');
 const { Location } = require('../models/Location');
 const { Member } = require('../models/Member');
+const { Reward } = require('../models/Reward');
+const { Subscription } = require('../models/Subscription');
 const { User } = require('../models/User');
 
 const DB = nconf.get('db.mysql.database');
@@ -24,6 +26,8 @@ const models = {
   AccountMember: AccountMember.init(sequelize, Sequelize),
   Location: Location.init(sequelize, Sequelize),
   Member: Member.init(sequelize, Sequelize),
+  Reward: Reward.init(sequelize, Sequelize),
+  Subscription: Subscription.init(sequelize, Sequelize),
   User: User.init(sequelize, Sequelize)
 }
 

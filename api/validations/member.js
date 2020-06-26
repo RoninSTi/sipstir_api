@@ -2,15 +2,13 @@ const { Member } = require('../models/Member');
 
 const validateGetMemberAccounts = {
   preHandler: [
-    async function (request, _, done) {
+    async function (request) {
       const { id } = request.params;
 
-      const existingUser = await Member.findByPk(1);
+      const existingUser = await Member.findByPk(id);
 
-      if (existingUser) {
-        done()
-      } else {
-        done(new Error('Member does not exist.'));
+      if (!existingUser) {
+        throw new Error('Member does not exist.');
       }
     }
   ],

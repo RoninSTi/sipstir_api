@@ -5,12 +5,12 @@ const { Account } = require('./Account');
 class Member extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
-      email: {
-        type: DataTypes.STRING,
-        unique: true
-      },
+      email: DataTypes.STRING,
       permissions: DataTypes.STRING
     }, {
+      indexes: [
+        { unique: true, fields: ['email'] },
+      ],
       sequelize,
       timestamps: true
     })

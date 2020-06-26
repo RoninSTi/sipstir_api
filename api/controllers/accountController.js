@@ -20,8 +20,6 @@ const createMemberIds = async members => {
 const addMembersToAccount = async ({ accountId, members }) => {
   const memberIds = await createMemberIds(members);
 
-  console.log({ memberIds })
-
   const accountMembers = memberIds.map(memberId => AccountMember.findOrCreate({
     where: {
       accountId,
@@ -33,22 +31,25 @@ const addMembersToAccount = async ({ accountId, members }) => {
 }
 
 const postAccount = async (req, res) => {
-  const { members, name, placeId } = req.body;
+  const { email, members, name, placeId } = req.body;
 
   try {
     const account = await Account.create({
+      email,
       name
     });
 
-    await addMembersToAccount({ accountId: account.id, members });
+    const setupTasks = [
+      addMembersToAccount({ accountId: account.id, members }),
+      account.createStripeAccount()
+    ];
 
+    await Promise.all(setupTasks);
 
     if (placeId) {
       const location = await Location.createLocationFromPlaceId(placeId);
 
-      account.locationId = location.id
-
-      await account.save();
+      await account.setLocation(location)
     }
 
     res.send(account.toJSON());

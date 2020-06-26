@@ -4,16 +4,14 @@ class User extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
       avatar: DataTypes.STRING,
-      email: {
-        type: DataTypes.STRING,
-        unique: true
-      },
+      email: DataTypes.STRING,
       pushToken: DataTypes.STRING,
-      username: {
-        type: DataTypes.STRING,
-        unique: true
-      }
+      username: DataTypes.STRING,
     }, {
+      indexes: [
+        { unique: true, fields: ['email'] },
+        { unique: true, fields: ['username'] }
+      ],
       sequelize,
       timestamps: true
     })

@@ -1,9 +1,12 @@
 const { Model } = require('sequelize');
+const { createCustomer } = require('../adaptors/stripeAdaptor');
 
 class Account extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
       name: DataTypes.STRING,
+      email: DataTypes.STRING,
+      stripeCustomerId: DataTypes.STRING
     }, {
       sequelize,
       timestamps: true
@@ -35,6 +38,16 @@ class Account extends Model {
     if (!account) return {}
 
     return account.toJSON();
+  }
+
+  async createStripeAccount() {
+    if (!this.email) throw new Error('Account requires email')
+
+    const customer = await createCustomer(this.email);
+
+    this.stripeCustomerId = customer.id;
+
+    return this.save()
   }
 }
 
