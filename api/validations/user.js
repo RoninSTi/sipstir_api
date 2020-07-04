@@ -1,7 +1,7 @@
 const { Account } = require('../models/Account');
 const { User } = require('../models/User');
 
-validateGetCheckUsername = {
+const validateGetCheckUsername = {
   schema: {
     params: {
       type: 'object',
@@ -13,10 +13,36 @@ validateGetCheckUsername = {
   }
 }
 
+const validateGetUser = {
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'number' }
+
+      },
+      required: ['id']
+    }
+  }
+}
+
+const validateGetUserEmail = {
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' }
+
+      },
+      required: ['email']
+    }
+  }
+}
+
 const validatePostUser = {
   preHandler: [
     async function (request) {
-      const { accountId, email, username } = request.body;
+      const { accountId, email } = request.body;
 
       if (accountId) {
         const account = await Account.findByPk(accountId)
@@ -30,14 +56,10 @@ const validatePostUser = {
         }
       }
 
-      const existingUser = await User.findOne({
-        where: {
-          email, username
-        }
-      });
+      const user = await User.findOne({ where: { email } });
 
-      if (existingUser) {
-        throw new Error('User exists');
+      if (user) {
+        throw new Error('User exists.');
       }
     }
   ],
@@ -45,18 +67,53 @@ const validatePostUser = {
     body: {
       type: 'object',
       properties: {
-        accountId: { type: 'number'},
-        avatar: { type: 'string', format: 'url'},
+        accountId: { type: 'number' },
+        avatar: { type: 'string', format: 'url' },
         email: { type: 'string', format: 'email' },
         pushToken: { type: 'string' },
         username: { type: 'string'}
       },
-      required: ['email', 'username'],
+      required: ['email'],
     },
   },
 }
 
+const validatePutUser = {
+  preHandler: [
+    async function (request) {
+      const { userId } = request.params;
+
+      const user = await User.findByPk(userId);
+
+      if (!user) {
+        throw new Error('User does not exist');
+      }
+    }
+  ],
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        avatar: { type: 'string', format: 'url' },
+        email: { type: 'string', format: 'email' },
+        pushToken: { type: 'string' },
+        username: { type: 'string' }
+      }
+    },
+    params: {
+      type: 'object',
+      properties: {
+        userId: { type: 'number' }
+      },
+      required: ['userId']
+    }
+  }
+}
+
 module.exports = {
   validateGetCheckUsername,
-  validatePostUser
+  validateGetUser,
+  validateGetUserEmail,
+  validatePostUser,
+  validatePutUser
 }

@@ -1,4 +1,5 @@
 const { Account } = require('../models/Account');
+const { Reward } = require('../models/Reward');
 
 const validateGetAccountRewards = {
   preHandler: [
@@ -29,10 +30,11 @@ const validatePostReward = {
       type: 'object',
       properties: {
         accountId: { type: 'number' },
-        isActive: { type: 'bool' },
+        isActive: { type: 'boolean' },
         discount: { type: 'number' },
         image: { type: 'string', format: 'url'},
         message: { type: 'string' },
+        name: { type: 'string' },
         points: { type: 'number' },
         subject: { type: 'string' }
       },
@@ -41,7 +43,44 @@ const validatePostReward = {
   },
 }
 
+const validatePutReward = {
+  preHandler: [
+    async function (req) {
+      const { rewardId } = req.params;
+
+      const reward = await Reward.findByPk(rewardId);
+
+      if (!reward) {
+        throw new Error('Reward does not exist');
+      }
+    }
+  ],
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        isActive: { type: 'boolean' },
+        discount: { type: 'number' },
+        image: { type: 'string', format: 'url' },
+        message: { type: 'string' },
+        name: { type: 'string' },
+        points: { type: 'number' },
+        subject: { type: 'string' }
+      },
+      required: ['discount', 'points'],
+    },
+    params: {
+      type: 'object',
+      properties: {
+        rewardId: { type: 'number'}
+      },
+      required: ['rewardId']
+    }
+  },
+}
+
 module.exports = {
   validateGetAccountRewards,
-  validatePostReward
+  validatePostReward,
+  validatePutReward
 }

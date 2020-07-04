@@ -7,6 +7,7 @@ class AccountMember extends Model {
       memberId: DataTypes.INTEGER,
       role: {
         type: DataTypes.ENUM,
+        defaultValue: 'user',
         values: ['admin', 'user']
       }
     }, {

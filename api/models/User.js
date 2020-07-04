@@ -5,6 +5,14 @@ class User extends Model {
     return super.init({
       avatar: DataTypes.STRING,
       email: DataTypes.STRING,
+      points: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      pointsBalance: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
       pushToken: DataTypes.STRING,
       username: DataTypes.STRING,
     }, {
@@ -15,6 +23,21 @@ class User extends Model {
       sequelize,
       timestamps: true
     })
+  }
+
+  async addPoints({ amount }) {
+    const { Points } = this.sequelize.models;
+
+    const points = await Points.create({
+      amount
+    });
+
+    await points.setUser(this);
+
+    this.points = this.points + amount;
+    this.pointsBalance = this.pointsBalance + amount;
+
+    await this.save();
   }
 }
 

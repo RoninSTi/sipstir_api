@@ -1,4 +1,4 @@
-const { Location } = require('../models/Location');
+const { Location } = require('../db/db');
 
 const postLocationId = async (req, res) => {
   const { placeId } = req.params;

@@ -20,6 +20,8 @@ const createServer = (options) => {
     },
   });
 
+  server.register(require('fastify-redis'), { host: 'redis' });
+
   server.register(require('fastify-auth0-verify'), {
     audience: nconf.get('keys.auth0.audience'),
     domain: nconf.get('keys.auth0.domain'),
@@ -32,6 +34,11 @@ const createServer = (options) => {
     origin: (origin, cb) => {
       if (/localhost/.test(origin) || origin === undefined) {
         //  Request from localhost will pass
+        cb(null, true);
+        return;
+      }
+
+      if (origin === 'https://barsnap-staging.herokuapp.com') {
         cb(null, true);
         return;
       }
@@ -52,7 +59,7 @@ const createServer = (options) => {
   });
 
   // start the server
-  server.listen(8080, '0.0.0.0', (err) => {
+  server.listen(process.env.PORT, '0.0.0.0', (err) => {
     if (err) {
       server.log.error(err);
       console.log(err);

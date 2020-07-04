@@ -32,8 +32,11 @@ const validatePostAccount = {
         members: {
           type: 'array',
           items: {
-            type: 'string',
-            format: 'email'
+            type: 'object',
+            properties: {
+              email: { type: 'string', format: 'email' },
+              role: { type: 'string', enum: ['admin', 'user'] },
+            }
           }
         },
         name: { type: 'string' },
@@ -49,15 +52,10 @@ const validatePostAccountMemberAdd = {
     body: {
       type: 'object',
       properties: {
-        members: {
-          type: 'array',
-          items: {
-            type: 'string',
-            format: 'email'
-          }
-        }
+        email: { type: 'string', format: 'email' },
+        role: { type: 'string', enum: ['admin', 'user'] }
       },
-      required: ['members']
+      required: ['email', 'role']
     },
     params: {
       type: 'object',
@@ -69,8 +67,29 @@ const validatePostAccountMemberAdd = {
   }
 }
 
+const validatePutAccountMember = {
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+        role: { type: 'string', enum: ['admin', 'user'] }
+      }
+    },
+    params: {
+      type: 'object',
+      properties: {
+        accountId: { type: 'number' },
+        memberId: { type: 'number' }
+      },
+      required: ['accountId', 'memberId']
+    }
+  }
+}
+
 module.exports = {
   validateDeleteAccountMember,
   validatePostAccount,
-  validatePostAccountMemberAdd
+  validatePostAccountMemberAdd,
+  validatePutAccountMember
 }

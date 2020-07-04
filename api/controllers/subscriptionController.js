@@ -1,5 +1,4 @@
-const { Account } = require('../models/Account');
-const { Subscription } = require('../models/Subscription');
+const { Account, Subscription } = require('../db/db');
 
 const { attachPaymentToCustomer, createSubscription } = require('../adaptors/stripeAdaptor');
 

@@ -1,4 +1,4 @@
-const { Member } = require('../models/Member');
+const { Member } = require('../db/db');
 
 const getMemberAccounts = async (req, res) => {
   const { id } = req.params;
@@ -32,9 +32,9 @@ const postMember = async (req, res) => {
       await member.save();
     }
 
-    const jsonResponse = await Member.getSingle({ id: member.id } );
+    const response = await Member.getSingle({ id: member.id } );
 
-    res.send(jsonResponse);
+    res.send(response);
   } catch (error) {
     res.send(error);
   }

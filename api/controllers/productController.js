@@ -1,4 +1,7 @@
-const { attachPaymentToCustomer, createSubscription, getPrices: getStripePrices, getProducts: getStripeProducts } = require('../adaptors/stripeAdaptor');
+const {
+  getPrices: getStripePrices,
+  getProducts: getStripeProducts
+} = require('../adaptors/stripeAdaptor');
 
 const getPricesForProduct = ({ product, prices }) => {
   return prices

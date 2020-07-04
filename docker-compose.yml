@@ -11,15 +11,23 @@ services:
       - 3306:3306
     volumes:
       - mysql:/var/lib/mysql
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/var/lib/redis
   barsnap-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./dev/Dockerfile
     environment:
       - NODE_ENV=development
     ports:
       - 8080:8080
     links:
       - mysql
+      - redis
 volumes:
   mysql:
+  redis:

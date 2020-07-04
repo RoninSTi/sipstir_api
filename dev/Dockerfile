@@ -10,10 +10,10 @@ COPY . .
 
 ENV APP_SETTINGS_FILE_PATH '/usr/src/app/config/appSettings.json'
 
-ENV PORT $PORT
+ENV PORT 8080
 
-ENV MYSQL_CONNECTION_STRING 'mysql://b815e59fc4740c:a0115678@us-cdbr-east-02.cleardb.com/heroku_3bccc19bd0004b9?reconnect=true'
+ENV MYSQL_CONNECTION_STRING 'mysql://root:@mysql/barsnap'
 
-# EXPOSE 8080
+EXPOSE 8080
 
 CMD [ "node", "app.js" ]

@@ -1,29 +1,30 @@
-const { Account } = require('../models/Account');
-const { AccountMember } = require('../models/AccountMember');
-const { Location } = require('../models/Location');
-const { Member } = require('../models/Member');
+const { Account, AccountMember, Location, Member } = require('../db/db');
 
-const createMemberIds = async members => {
-  const memberIds = members.map( async email => {
+const createMembers = async members => {
+  const memberIds = members.map( async m => {
     const [member] = await Member.findOrCreate({
       where: {
-        email,
+        email: m.email,
       }
     });
 
-    return member.id
+    return {
+      id: member.id,
+      role: m.role
+    };
   });
 
   return Promise.all(memberIds);
 }
 
 const addMembersToAccount = async ({ accountId, members }) => {
-  const memberIds = await createMemberIds(members);
+  const addedMembers = await createMembers(members);
 
-  const accountMembers = memberIds.map(memberId => AccountMember.findOrCreate({
+  const accountMembers = addedMembers.map(member => AccountMember.findOrCreate({
     where: {
       accountId,
-      memberId,
+      memberId: member.id,
+      role: member.role
     }
   }));
 
@@ -59,17 +60,19 @@ const postAccount = async (req, res) => {
 };
 
 const postAccountMemberAdd = async (req, res) => {
-  const { members } = req.body;
+  const { email, role } = req.body;
   const { id } = req.params;
 
   try {
     const account = await Account.findByPk(id)
 
-    if (!account) {
-      res.send(new Error('Account does not exist.'))
-    }
+    const member = await Member.create({ email })
 
-    await addMembersToAccount({ accountId: account.id, members });
+    await AccountMember.create({
+      accountId: account.id,
+      memberId: member.id,
+      role,
+    })
 
     const response = await Account.getSingle(account.id);
 
@@ -98,8 +101,33 @@ const deleteAccountMember = async (req, res) => {
   }
 }
 
+const putAccountMember = async (req, res) => {
+  const { accountId, memberId } = req.params;
+  const { role } = req.body
+
+  try {
+    const accountMember = await AccountMember.findOne({
+      where: {
+        accountId,
+        memberId
+      }
+    });
+
+    accountMember.role = role;
+
+    await accountMember.save()
+
+    const response = await Account.getSingle(accountId);
+
+    res.send(response)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
 module.exports = {
   deleteAccountMember,
   postAccount,
-  postAccountMemberAdd
+  postAccountMemberAdd,
+  putAccountMember
 };

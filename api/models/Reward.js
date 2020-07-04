@@ -7,6 +7,7 @@ class Reward extends Model {
       discount: DataTypes.INTEGER,
       image: DataTypes.STRING,
       message: DataTypes.STRING,
+      name: DataTypes.STRING,
       points: DataTypes.INTEGER,
       subject: DataTypes.STRING
     }, {
@@ -20,6 +21,18 @@ class Reward extends Model {
       as: 'account',
       foreignKey: 'accountId'
     });
+  }
+
+  static async resetActiveForAccount(accountId) {
+    const rewards = await Reward.findAll({
+      where: {
+        accountId
+      }
+    });
+
+    const ids = rewards.map(reward => reward.id);
+
+    return Reward.update({ isActive: false }, { where: { id: ids } });
   }
 }
 

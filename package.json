@@ -24,6 +24,7 @@
     "fastify-autoload": "^1.2.2",
     "fastify-cors": "^3.0.3",
     "fastify-plugin": "^1.6.1",
+    "fastify-redis": "^4.0.1",
     "fastify-sequelize": "^1.0.4",
     "lodash": "^4.17.15",
     "mysql2": "^2.1.0",
