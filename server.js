@@ -7,6 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const bsCheckPermissions = require('./api/plugins/check-permissions');
 
+const { Points } = require('./api/db/db');
+
 const createRequestId = () => uuidv4();
 
 const createServer = (options) => {
@@ -20,7 +22,11 @@ const createServer = (options) => {
     },
   });
 
-  server.register(require('fastify-redis'), { host: 'redis' });
+  server
+    .register(require('fastify-redis'), { host: 'redis' })
+    .after(() => {
+      Points.buildInitialLeaderboard({ redis: server.redis });
+    });
 
   server.register(require('fastify-auth0-verify'), {
     audience: nconf.get('keys.auth0.audience'),

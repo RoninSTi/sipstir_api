@@ -54,7 +54,7 @@ const postCheers = async (req, res) => {
   }
 }
 
-const postGuess = async (req, res) => {
+async function postGuess(req, res) {
   const { placeId, createdById, text } = req.body;
   const { postId } = req.params;
 
@@ -65,9 +65,9 @@ const postGuess = async (req, res) => {
 
     const user = await User.findByPk(createdById);
 
-    await user.addPoints({ amount: 5 });
-
     const correct = post.locationId === location.id;
+
+    await user.addPoints({ amount: correct ? 5 : 1, redis: this.redis });
 
     const guess = await Guess.create({
       correct
@@ -95,7 +95,7 @@ const postGuess = async (req, res) => {
   }
 }
 
-const postPost = async (req, res) => {
+async function postPost(req, res) {
   const { createdById, locationId, ...postData } = req.body;
 
   try {
@@ -105,7 +105,7 @@ const postPost = async (req, res) => {
 
     const user = await User.findByPk(createdById);
 
-    await user.addPoints({ amount: 10 });
+    await user.addPoints({ amount: 10, redis: this.redis });
 
     await post.setLocation(location);
 

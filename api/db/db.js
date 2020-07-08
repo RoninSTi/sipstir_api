@@ -23,6 +23,7 @@ const models = {
   Guess: Guess.init(sequelize, Sequelize),
   Location: Location.init(sequelize, Sequelize),
   Member: Member.init(sequelize, Sequelize),
+  Points: Points.init(sequelize, Sequelize),
   Post: Post.init(sequelize, Sequelize),
   Reward: Reward.init(sequelize, Sequelize),
   Subscription: Subscription.init(sequelize, Sequelize),

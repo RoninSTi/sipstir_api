@@ -10,8 +10,10 @@ console.log({ appSettingsPath });
 loadSettings({ appSettingsPath })
   .then(() => {
     const db = require("./api/db/db");
-    db.sequelize.sync({ alter: true });
 
+    return db.sequelize.sync({ alter: true });
+  })
+  .then(() => {
     const serverOptions = {
       logSeverity: nconf.get("logSeverity"),
     };

@@ -25,12 +25,14 @@ class User extends Model {
     })
   }
 
-  async addPoints({ amount }) {
+  async addPoints({ amount, redis }) {
     const { Points } = this.sequelize.models;
 
     const points = await Points.create({
       amount
     });
+
+    redis.zadd('leaderboard', amount, this.id);
 
     await points.setUser(this);
 
