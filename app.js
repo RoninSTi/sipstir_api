@@ -5,8 +5,6 @@ const { loadSettings } = require("./config/configurationAdaptor");
 
 const appSettingsPath = process.env.APP_SETTINGS_FILE_PATH;
 
-console.log({ appSettingsPath });
-
 loadSettings({ appSettingsPath })
   .then(() => {
     const db = require("./api/db/db");

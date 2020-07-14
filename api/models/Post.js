@@ -1,5 +1,7 @@
 const { Model } = require('sequelize');
 
+const moment = require('moment');
+
 class Post extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
@@ -16,6 +18,13 @@ class Post extends Model {
       revealed: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+        type: DataTypes.STRING,
+        get: function () {
+          const createdAt = moment(this.getDataValue('createdAt'));
+          const expiresAt = createdAt.add(12, 'hours');
+
+          return moment().isAfter(expiresAt);
+        },
       },
       guessesCorrect: {
         type: DataTypes.INTEGER,

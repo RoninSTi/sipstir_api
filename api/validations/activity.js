@@ -1,12 +1,11 @@
-const validateGetFeed = {
+const validateGetActivity = {
   schema: {
     params: {
       type: 'object',
       properties: {
-        feedType: { type: 'string', enum: ['following', 'main', 'user'] },
         userId: { type: 'number' }
       },
-      required: ['feedType', 'userId']
+      required: ['userId']
     },
     querystring: {
       page: { type: 'number' },
@@ -16,5 +15,5 @@ const validateGetFeed = {
 };
 
 module.exports = {
-  validateGetFeed
+  validateGetActivity
 };

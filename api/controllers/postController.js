@@ -2,9 +2,10 @@ const { Cheer, Comment, Guess, Location, Post, User } = require('../db/db');
 
 const getPost = async (req, res) => {
   const { postId } = req.params;
+  const { userId } = req.query;
 
   try {
-    const post = await Post.getSingle({ id: postId })
+    const post = await Post.getSingle({ id: postId, userId })
 
     res.send(post);
   } catch (error) {
@@ -12,7 +13,26 @@ const getPost = async (req, res) => {
   }
 }
 
-const postCheers = async (req, res) => {
+const getPostCheers = async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const cheers = await Cheer.findAll({
+      include: [{ all: true, nested: true }],
+      where: {
+        postId: postId
+      }
+    });
+
+    const response = cheers.map(cheer => cheer.toJSON());
+
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+}
+
+async function postCheers(req, res) {
   const { createdById } = req.body;
   const { postId } = req.params;
 
@@ -38,6 +58,23 @@ const postCheers = async (req, res) => {
           id: postId
         }
       });
+
+      const post = await Post.findByPk(postId);
+
+      const cheersActivity = {
+        actor: `${createdById}`,
+        verb: 'cheers',
+        object: `post:${postId}`,
+        time: new Date(),
+      }
+
+      const notificationFeed = this.client.feed('notification', `${post.createdById}`);
+
+      await notificationFeed.addActivity(cheersActivity);
+
+      const creatorNotificationFeed = this.client.feed('notification', `${createdById}`);
+
+      await creatorNotificationFeed.addActivity(cheersActivity);
     } else {
       await Post.decrement(['cheers'], {
         where: {
@@ -61,21 +98,46 @@ async function postGuess(req, res) {
   try {
     const post = await Post.findByPk(postId);
 
-    const location = await Location.createLocationFromPlaceId(placeId);
+    let correct = false;
 
-    const user = await User.findByPk(createdById);
+    let location = null;
 
-    const correct = post.locationId === location.id;
+    if (placeId) {
+      location = await Location.createLocationFromPlaceId(placeId);
 
-    await user.addPoints({ amount: correct ? 5 : 1, redis: this.redis });
+      correct = post.locationId === location.id;
+    }
 
     const guess = await Guess.create({
       correct
     });
 
+    const user = await User.findByPk(createdById);
+
     await guess.setCreatedBy(user);
 
-    await guess.setLocation(location);
+    await user.addPoints({ amount: correct ? 5 : 1, redis: this.redis });
+
+    if (location) {
+      await guess.setLocation(location);
+    }
+
+    const guessActivity = {
+      actor: `${createdById}`,
+      verb: 'guess',
+      object: `post:${post.id}`,
+      guess: `${guess.id}`,
+      correct,
+      time: new Date(),
+    };
+
+    const notificationFeed = this.client.feed('notification', `${post.createdById}`);
+
+    await notificationFeed.addActivity(guessActivity);
+
+    const creatorNotificationFeed = this.client.feed('notification', `${createdById}`);
+
+    await creatorNotificationFeed.addActivity(guessActivity);
 
     if (text) {
       const comment = await Comment.create({ text });
@@ -86,6 +148,20 @@ async function postGuess(req, res) {
     }
 
     await post.addGuess(guess);
+
+    if (correct) {
+      await Post.increment(['guessesCorrect'], {
+        where: {
+          id: postId
+        }
+      });
+    } else {
+      await Post.increment(['guessesWrong'], {
+        where: {
+          id: postId
+        }
+      });
+    }
 
     const response = await Post.getSingle({ id: postId, userId: createdById });
 
@@ -111,7 +187,18 @@ async function postPost(req, res) {
 
     await post.setCreatedBy(user);
 
-    const response = Post.getSingle({ id: post.id, userId: createdById });
+    const userFeed = this.client.feed('user', `${createdById}`);
+
+    await userFeed.addActivity({
+      actor: `${createdById}`,
+      verb: 'post',
+      object: `post:${post.id}`,
+      foreign_id: `post:${post.id}`,
+      location: `location:${location.id}`,
+      time: new Date(),
+    });
+
+    const response = await Post.getSingle({ id: post.id, userId: createdById });
 
     res.send(response);
   } catch (error) {
@@ -121,6 +208,7 @@ async function postPost(req, res) {
 
 module.exports = {
   getPost,
+  getPostCheers,
   postCheers,
   postGuess,
   postPost

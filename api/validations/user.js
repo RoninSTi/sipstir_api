@@ -78,6 +78,25 @@ const validatePostUser = {
   },
 }
 
+const validatePostUserFollow = {
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        userId: { type: 'number'}
+      },
+      required: ['userId']
+    },
+    params: {
+      type: 'object',
+      properties: {
+        followingId: { type: 'number' }
+      },
+      required: ['followingId']
+    }
+  }
+}
+
 const validatePutUser = {
   preHandler: [
     async function (request) {
@@ -115,5 +134,6 @@ module.exports = {
   validateGetUser,
   validateGetUserEmail,
   validatePostUser,
+  validatePostUserFollow,
   validatePutUser
 }

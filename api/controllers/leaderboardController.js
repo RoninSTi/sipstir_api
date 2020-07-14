@@ -20,10 +20,13 @@ async function getLeaderboard(_, res) {
       }
     );
 
-    const response = ids.map(id => {
+    const response = ids.map((id, index) => {
       const user = users.find(user => user.id === parseInt(id));
 
-      return user.toJSON();
+      return {
+        ...user.toJSON(),
+        allTimeLeaderboardPosition: index + 1
+      };
     });
 
     res.send(response);

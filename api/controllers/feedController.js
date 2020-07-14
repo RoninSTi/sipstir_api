@@ -1,6 +1,6 @@
 const { Comment, Guess, Post } = require('../db/db');
 
-const getFeed = async (req, res) => {
+async function getFeed(req, res) {
   const { feedType, userId } = req.params;
   const { page = 1, pageSize = 100 } = req.query;
 
@@ -28,8 +28,30 @@ const getFeed = async (req, res) => {
         where: {
           createdById: userId
         }
-      }
+      };
     }
+
+    if (feedType === 'following') {
+      const timelineFeed = this.client.feed('timeline', `${userId}`);
+
+      const timelineFeedResponse = await timelineFeed.get({ limit, offset });
+
+      const postIds = timelineFeedResponse.results.map(activity => {
+        const { object } = activity;
+
+        const postId = parseInt(object.split(':')[1]);
+
+        return postId;
+      });
+
+      query = {
+        ...query,
+        where: {
+          id: postIds
+        }
+      };
+    }
+
     const posts = await Post.findAll({ ...query });
 
     const rawResponse = posts.map(post => post.toJSON());

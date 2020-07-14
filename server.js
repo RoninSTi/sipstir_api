@@ -4,6 +4,7 @@ const AutoLoad = require('fastify-autoload');
 const nconf = require('nconf');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const stream = require('getstream');
 
 const bsCheckPermissions = require('./api/plugins/check-permissions');
 
@@ -63,6 +64,10 @@ const createServer = (options) => {
       reply.send(err);
     }
   });
+
+  const client = stream.default.connect(nconf.get('keys.stream.key'), nconf.get('keys.stream.secret'), nconf.get('keys.stream.appId'), { location: 'us-east' });
+
+  server.decorate('client', client);
 
   // start the server
   server.listen(process.env.PORT, '0.0.0.0', (err) => {

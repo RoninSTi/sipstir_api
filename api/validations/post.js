@@ -6,6 +6,21 @@ const validateGetPost = {
         postId: { type: 'number' }
       },
       required: ['postId']
+    },
+    queryString: {
+      userId: { type: 'number' }
+    }
+  }
+};
+
+const validateGetPostCheers = {
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        postId: { type: 'number' }
+      },
+      required: ['postId']
     }
   }
 };
@@ -38,7 +53,7 @@ const validatePostGuess = {
         placeId: { type: 'string' },
         text: { type: 'string' }
       },
-      required: ['createdById', 'placeId']
+      required: ['createdById']
     },
     params: {
       type: 'object',
@@ -67,6 +82,7 @@ const validatePostPost = {
 
 module.exports = {
   validateGetPost,
+  validateGetPostCheers,
   validatePostCheers,
   validatePostGuess,
   validatePostPost
