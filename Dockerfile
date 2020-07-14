@@ -14,6 +14,4 @@ ENV PORT $PORT
 
 ENV MYSQL_CONNECTION_STRING 'mysql://b815e59fc4740c:a0115678@us-cdbr-east-02.cleardb.com/heroku_3bccc19bd0004b9?reconnect=true'
 
-# EXPOSE 8080
-
 CMD [ "node", "app.js" ]
