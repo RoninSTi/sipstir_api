@@ -8,11 +8,13 @@ RUN npm install
 
 COPY . .
 
-ENV APP_SETTINGS_FILE_PATH '/usr/src/app/config/appSettings.json'
+ENV APP_SETTINGS_FILE_PATH '/usr/src/app/dev/appSettings.json'
 
 ENV PORT 8080
 
 ENV MYSQL_CONNECTION_STRING 'mysql://root:@mysql/barsnap'
+
+ENV REDIS_URL 'redis://redis'
 
 EXPOSE 8080
 

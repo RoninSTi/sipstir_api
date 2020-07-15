@@ -24,7 +24,7 @@ const createServer = (options) => {
   });
 
   server
-    .register(require('fastify-redis'), { host: 'redis' })
+    .register(require('fastify-redis'), { url: process.env.REDIS_URL })
     .after(() => {
       Points.buildInitialLeaderboard({ redis: server.redis });
     });
