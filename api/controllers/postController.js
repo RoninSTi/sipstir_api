@@ -65,6 +65,7 @@ async function postCheers(req, res) {
         actor: `${createdById}`,
         verb: 'cheers',
         object: `post:${postId}`,
+        postUserId: `user:${post.createdById}`,
         time: new Date(),
       }
 
