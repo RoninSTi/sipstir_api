@@ -97,6 +97,8 @@ async function postUserFollow(req, res) {
 
     const isFollowing = followingResponse.results.length > 0;
 
+    const followingUser = await User.findByPk(followingId)
+
     if (isFollowing) {
       await timelineFeed.unfollow('user', `${followingId}`);
 
@@ -105,12 +107,15 @@ async function postUserFollow(req, res) {
         verb: 'unfollow',
         object: `user:${followingId}`,
         time: new Date(),
+        message: `You unfollowed ${followingUser.username}`
       }
 
       const creatorNotificationFeed = this.client.feed('notification', `${userId}`);
 
       await creatorNotificationFeed.addActivity(unfollowActivity);
     } else {
+      const user = await User.findByPk(userId)
+
       await timelineFeed.follow('user', `${followingId}`);
 
       const followActivity = {
@@ -120,13 +125,25 @@ async function postUserFollow(req, res) {
         time: new Date(),
       }
 
+      const objectFollowActivity = {
+        ...followActivity,
+        foreign_id: `${followingId}`,
+        message: `${user.username} followed you`
+      }
+
       const notificationFeed = this.client.feed('notification', `${followingId}`);
 
-      await notificationFeed.addActivity(followActivity);
+      await notificationFeed.addActivity(objectFollowActivity);
+
+      const actorFollowActivity = {
+        ...followActivity,
+        foreign_id: `${userId}`,
+        message: `You followed ${followingUser.username}`
+      }
 
       const creatorNotificationFeed = this.client.feed('notification', `${userId}`);
 
-      await creatorNotificationFeed.addActivity(followActivity);
+      await creatorNotificationFeed.addActivity(actorFollowActivity);
     }
 
     const response = await User.getSingle({ client: this.client, id: userId, redis: this.redis });

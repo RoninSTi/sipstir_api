@@ -61,21 +61,47 @@ async function postCheers(req, res) {
 
       const post = await Post.findByPk(postId);
 
+      const actorUser = await User.findByPk(createdById);
+
+      const postUser = await User.findByPk(post.createdById);
+
       const cheersActivity = {
         actor: `${createdById}`,
         verb: 'cheers',
         object: `post:${postId}`,
-        postUserId: `user:${post.createdById}`,
         time: new Date(),
       }
 
-      const notificationFeed = this.client.feed('notification', `${post.createdById}`);
+      if (actorUser.id === postUser.id) {
+        const activity = {
+          ...cheersActivity,
+          message: 'You cheersed your BarSnap'
+        }
 
-      await notificationFeed.addActivity(cheersActivity);
+        const selfNotificationFeed = this.client.feed('notification', `${createdById}`);
 
-      const creatorNotificationFeed = this.client.feed('notification', `${createdById}`);
+        await selfNotificationFeed.addActivity(activity)
+      } else {
+        const actorActivity = {
+          ...cheersActivity,
+          foreign_id: `${createdById}`,
+          message: `You cheersed ${postUser.username}'s BarSnap`
+        }
 
-      await creatorNotificationFeed.addActivity(cheersActivity);
+        const actorNotificationFeed = this.client.feed('notification', `${createdById}`)
+
+        await actorNotificationFeed.addActivity(actorActivity)
+
+        const objectActivity = {
+          ...cheersActivity,
+          foreign_id: `${post.createdById}`,
+          message: `${actorUser.username} cheersed your BarSnap`
+        }
+
+        const objectNotificationFeed = this.client.feed('notification', `${post.createdById}`)
+
+        await objectNotificationFeed.addActivity(objectActivity)
+      }
     } else {
       await Post.decrement(['cheers'], {
         where: {
@@ -98,6 +124,8 @@ async function postGuess(req, res) {
 
   try {
     const post = await Post.findByPk(postId);
+
+    const postUser = await User.findByPk(post.createdById)
 
     let correct = false;
 
@@ -127,18 +155,30 @@ async function postGuess(req, res) {
       actor: `${createdById}`,
       verb: 'guess',
       object: `post:${post.id}`,
-      guess: `${guess.id}`,
+      guessId: `${guess.id}`,
       correct,
       time: new Date(),
     };
 
-    const notificationFeed = this.client.feed('notification', `${post.createdById}`);
+    const objectGuessActivity = {
+      ...guessActivity,
+      foreign_id: `${post.createdById}`,
+      message: `${user.username} guessed ${correct ? 'correctly' : 'incorrectly'} on your BarSnap`
+    }
 
-    await notificationFeed.addActivity(guessActivity);
+    const objectNotificationFeed = this.client.feed('notification', `${post.createdById}`);
 
-    const creatorNotificationFeed = this.client.feed('notification', `${createdById}`);
+    await objectNotificationFeed.addActivity(objectGuessActivity);
 
-    await creatorNotificationFeed.addActivity(guessActivity);
+    const actorGuessActivity = {
+      ...guessActivity,
+      foreign_id: `${createdById}`,
+      message: `You guessed ${correct ? 'correctly' : 'incorrectly'} on ${postUser.username}'s BarSnap`
+    }
+
+    const actorNotificationFeed = this.client.feed('notification', `${createdById}`);
+
+    await actorNotificationFeed.addActivity(actorGuessActivity);
 
     if (text) {
       const comment = await Comment.create({ text });

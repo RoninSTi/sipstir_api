@@ -34,12 +34,12 @@ async function getActivity(req, res) {
             }
 
             const activityResponse = {
-              createdById: parseInt(activity.actor),
-              verb: 'comment',
               createdAt: activity.time,
-              sortDate: new Date(activity.time),
-              object,
+              createdById: parseInt(activity.actor),
+              message: activity.message,
               postId,
+              sortDate: new Date(activity.time),
+              verb: 'comment'
             };
 
             rawResponse.push(activityResponse);
@@ -49,12 +49,12 @@ async function getActivity(req, res) {
         case 'guess':
           activities.forEach(activity => {
             const activityResponse = {
-              createdById: parseInt(activity.actor),
-              verb: 'guess',
               createdAt: activity.time,
-              sortDate: new Date(activity.time),
+              createdById: parseInt(activity.actor),
+              message: activity.message,
               postId: parseInt(activity.object.split(':')[1]),
-              correct: activity.correct || false,
+              sortDate: new Date(activity.time),
+              verb: 'guess'
             }
 
             rawResponse.push(activityResponse);
@@ -64,12 +64,12 @@ async function getActivity(req, res) {
         case 'cheers':
           activities.forEach(activity => {
             const activityResponse = {
-              createdById: parseInt(activity.actor),
-              verb: 'cheers',
               createdAt: activity.time,
-              sortDate: new Date(activity.time),
+              createdById: parseInt(activity.actor),
+              message: activity.message,
               postId: parseInt(activity.object.split(':')[1]),
-              postUserId: parseInt(activity.postUserId.split(':')[1])
+              sortDate: new Date(activity.time),
+              verb: 'cheers',
             };
 
             rawResponse.push(activityResponse);
@@ -80,11 +80,12 @@ async function getActivity(req, res) {
         case 'unfollow':
           activities.forEach(activity => {
             const activityResponse = {
-              createdById: parseInt(activity.actor),
-              verb: 'follow',
               createdAt: activity.time,
+              createdById: parseInt(activity.actor),
+              message: activity.message,
+              object: parseInt(activity.object.split(':')[1]),
               sortDate: new Date(activity.time),
-              object: parseInt(activity.object.split(':')[1])
+              verb: 'follow',
             }
 
             rawResponse.push(activityResponse);
@@ -98,13 +99,7 @@ async function getActivity(req, res) {
 
     const createdByUserIds = rawResponse.map(rr => rr.createdById)
 
-    const followedUserIds = rawResponse.map(rr => rr.verb === 'follow' || rr.verb === 'unfollow' ? rr.object : null).filter(el => el !== null);
-
-    const cheersUserIds = rawResponse.map(rr => rr.verb === 'cheers'? rr.postUserId : null).filter(el => el !== null)
-
-    const userIds = [...createdByUserIds, ...followedUserIds, ...cheersUserIds];
-
-    const distinctUserIds = [...new Set(userIds)];
+    const distinctUserIds = [...new Set(createdByUserIds)];
 
     const users = await User.findAll(
       {
@@ -119,32 +114,6 @@ async function getActivity(req, res) {
     const response = sortedActivities.map(activity => {
       const createdBy = users.find(u => u.id === activity.createdById).toJSON();
 
-      const subject = createdBy.id === userId ? 'You' : createdBy.username;
-
-      const formattedVerb = `${activity.verb}ed`;
-
-      const cheersObject = () => {
-        if (activity.postUserId === userId) {
-          return 'your'
-        } else {
-          return `${users.find(u => u.id === activity.postUserId).username}'s`
-        }
-      }
-
-      const formattedObject = () => {
-        switch (activity.verb) {
-          case 'cheers':
-            return `${cheersObject()} post`;
-          case 'comment':
-            return `on your ${activity.object.startsWith('guess') ? 'guess' : 'post'}`;
-          case 'follow':
-          case 'unfollow':
-            return `${users.find(u => u.id === activity.object).username}`;
-          case 'guess':
-            return `${activity.correct ? 'correctly' : 'incorrectly'} on your post`;
-        }
-      }
-
       const onClick = () => {
         switch (activity.verb) {
           case 'comment':
@@ -155,7 +124,6 @@ async function getActivity(req, res) {
               payload: activity.postId
             }
           case 'follow':
-          case 'unfollow':
             return {
               action: 'userDetail',
               payload: activity.object
@@ -166,7 +134,7 @@ async function getActivity(req, res) {
       return {
         createdAt: activity.createdAt,
         createdBy,
-        message: `${subject} ${formattedVerb} ${formattedObject()}`,
+        message: activity.message,
         onClick: onClick(),
       }
     });
