@@ -7,10 +7,10 @@ async function getLeaderboard(_, res) {
     const ids = top100
       .map((result, index) => {
         if (index % 2 === 0) {
-          return result;
+          return result
         }
       })
-      .filter(item => item !== undefined);
+      .filter(el => el !== undefined)
 
     const users = await User.findAll(
       {
@@ -20,7 +20,7 @@ async function getLeaderboard(_, res) {
       }
     );
 
-    const response = ids.map((id, index) => {
+    const response = ids.map((id, index)=> {
       const user = users.find(user => user.id === parseInt(id));
 
       return {
