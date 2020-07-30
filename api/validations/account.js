@@ -1,4 +1,9 @@
 const validateDeleteAccountMember = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     params: {
       type: 'object',
@@ -16,6 +21,11 @@ const validateDeleteAccountMember = {
 };
 
 const validatePostAccount = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   preHandler: [
     function (request, _, done) {
       request.bsCheckPermissions(['create:account'], done)
@@ -48,6 +58,11 @@ const validatePostAccount = {
 }
 
 const validatePostAccountMemberAdd = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',
@@ -68,6 +83,11 @@ const validatePostAccountMemberAdd = {
 }
 
 const validatePutAccountMember = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',

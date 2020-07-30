@@ -1,4 +1,9 @@
 const validatePostSubscription = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',

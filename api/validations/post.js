@@ -1,4 +1,9 @@
 const validateGetPost = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     params: {
       type: 'object',
@@ -14,6 +19,11 @@ const validateGetPost = {
 };
 
 const validateGetPostCheers = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     params: {
       type: 'object',
@@ -26,6 +36,11 @@ const validateGetPostCheers = {
 };
 
 const validatePostCheers = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',
@@ -45,6 +60,11 @@ const validatePostCheers = {
 }
 
 const validatePostGuess = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',

@@ -1,6 +1,7 @@
 const Fastify = require('fastify');
 const AutoLoad = require('fastify-autoload');
 
+const jwt = require('fastify-jwt')
 const nconf = require('nconf');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -29,11 +30,7 @@ const createServer = (options) => {
       Points.buildInitialLeaderboard({ redis: server.redis });
     });
 
-  server.register(require('fastify-auth0-verify'), {
-    audience: nconf.get('keys.auth0.audience'),
-    domain: nconf.get('keys.auth0.domain'),
-    secret: nconf.get('keys.auth0.clientSecret'),
-  });
+  server.register(jwt, { secret: nconf.get('jwt.secret') })
 
   server.register(bsCheckPermissions)
 
@@ -57,13 +54,13 @@ const createServer = (options) => {
     dir: path.join(__dirname, 'api', 'routes'),
   });
 
-  server.addHook('onRequest', async (request, reply) => {
-    try {
-      await request.jwtVerify();
-    } catch (err) {
-      reply.send(err);
-    }
-  });
+  // server.addHook('onRequest', async (request, reply) => {
+  //   try {
+  //     await request.jwtVerify();
+  //   } catch (err) {
+  //     reply.send(err);
+  //   }
+  // });
 
   const client = stream.default.connect(nconf.get('keys.stream.key'), nconf.get('keys.stream.secret'), nconf.get('keys.stream.appId'), { location: 'us-east' });
 

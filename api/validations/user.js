@@ -2,6 +2,11 @@ const { Account } = require('../models/Account');
 const { User } = require('../models/User');
 
 const validateGetCheckUsername = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     params: {
       type: 'object',
@@ -14,6 +19,11 @@ const validateGetCheckUsername = {
 }
 
 const validateGetUser = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     params: {
       type: 'object',
@@ -27,6 +37,11 @@ const validateGetUser = {
 }
 
 const validateGetUserEmail = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     params: {
       type: 'object',

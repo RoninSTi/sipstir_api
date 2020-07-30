@@ -1,6 +1,11 @@
 const { Member } = require('../models/Member');
 
 const validateGetMemberAccounts = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   preHandler: [
     async function (request) {
       const { id } = request.params;
@@ -23,6 +28,11 @@ const validateGetMemberAccounts = {
 }
 
 const validatePostMember = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',

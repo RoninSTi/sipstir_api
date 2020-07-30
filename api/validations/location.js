@@ -1,4 +1,9 @@
 const validatePostLocationId = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     params: {
       type: 'object',

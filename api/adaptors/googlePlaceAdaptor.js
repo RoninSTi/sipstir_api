@@ -5,8 +5,8 @@ const { getRequest } = require('../utils/httpClient');
 
 const getPlaceDetails = (id) => {
   const googlePlaceApiUrl = nconf.get('url.googlePlaceApi');
+
   const key = nconf.get('keys.google.googlePlaceApiKey');
-  console.log({ googlePlaceApiUrl, key, nconf });
 
   return getRequest({
     url: joinUrl(googlePlaceApiUrl, `details/json?place_id=${id}&fields=name,photos,vicinity,geometry/location&key=${key}`),

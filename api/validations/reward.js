@@ -2,6 +2,11 @@ const { Account } = require('../models/Account');
 const { Reward } = require('../models/Reward');
 
 const validateGetAccountRewards = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   preHandler: [
     async function (req) {
       const { accountId } = req.params;
@@ -25,6 +30,11 @@ const validateGetAccountRewards = {
 }
 
 const validatePostReward = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',
@@ -44,6 +54,11 @@ const validatePostReward = {
 }
 
 const validatePutReward = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   preHandler: [
     async function (req) {
       const { rewardId } = req.params;
