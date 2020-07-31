@@ -1,6 +1,10 @@
 const { Model } = require('sequelize');
 const { parseUserId } = require('../utils/stream');
 
+const { Expo } = require('expo-server-sdk')
+
+const expo = new Expo()
+
 class User extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
@@ -82,6 +86,25 @@ class User extends Model {
     this.pointsBalance = this.pointsBalance + amount;
 
     await this.save();
+  }
+
+  async sendPush({ body, data }) {
+    const pushToken = this.pushToken;
+
+    if (!pushToken) return
+
+    const messageData = {
+      to: pushToken,
+      sound: 'default',
+      body,
+      data
+    }
+
+    const chunks = expo.chunkPushNotifications([messageData]);
+
+    for (let chunk of chunks) {
+      await expo.sendPushNotificationsAsync(chunk);
+    }
   }
 }
 
