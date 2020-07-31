@@ -13,7 +13,13 @@ const { Reward } = require('../models/Reward');
 const { Subscription } = require('../models/Subscription');
 const { User } = require('../models/User');
 
-const sequelize = new Sequelize(process.env.MYSQL_CONNECTION_STRING)
+const sequelize = new Sequelize(process.env.MYSQL_CONNECTION_STRING, {
+  define: {
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_unicode_ci',
+    timestamps: true
+  },
+})
 
 const models = {
   Account: Account.init(sequelize, Sequelize),
