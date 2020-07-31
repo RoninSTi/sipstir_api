@@ -125,15 +125,19 @@ async function postUserFollow(req, res) {
         time: new Date(),
       }
 
+      const objectMessage = `${user.username} followed you`
+
       const objectFollowActivity = {
         ...followActivity,
         foreign_id: `${followingId}`,
-        message: `${user.username} followed you`
+        message: objectMessage
       }
 
       const notificationFeed = this.client.feed('notification', `${followingId}`);
 
       await notificationFeed.addActivity(objectFollowActivity);
+
+      await followingUser.sendPush({ body: objectMessage, data: { userId }})
 
       const actorFollowActivity = {
         ...followActivity,

@@ -92,15 +92,19 @@ async function postCheers(req, res) {
 
         await actorNotificationFeed.addActivity(actorActivity)
 
+        const objectMessage = `${actorUser.username} cheersed your BarSnap`
+
         const objectActivity = {
           ...cheersActivity,
           foreign_id: `${post.createdById}`,
-          message: `${actorUser.username} cheersed your BarSnap`
+          message: objectMessage
         }
 
         const objectNotificationFeed = this.client.feed('notification', `${post.createdById}`)
 
         await objectNotificationFeed.addActivity(objectActivity)
+
+        await postUser.sendPush({ body: objectMessage, data: { postId } })
       }
     } else {
       await Post.decrement(['cheers'], {
@@ -160,15 +164,19 @@ async function postGuess(req, res) {
       time: new Date(),
     };
 
+    const objectMessage = `${user.username} guessed ${correct ? 'correctly' : 'incorrectly'} on your BarSnap`
+
     const objectGuessActivity = {
       ...guessActivity,
       foreign_id: `${post.createdById}`,
-      message: `${user.username} guessed ${correct ? 'correctly' : 'incorrectly'} on your BarSnap`
+      message: objectMessage
     }
 
     const objectNotificationFeed = this.client.feed('notification', `${post.createdById}`);
 
     await objectNotificationFeed.addActivity(objectGuessActivity);
+
+    await postUser.sendPush({ body: objectMessage, data: { postId }})
 
     const actorGuessActivity = {
       ...guessActivity,
