@@ -5,7 +5,7 @@ class User extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
       avatar: DataTypes.STRING,
-      email: DataTypes.STRING,
+      email: DataTypes.STRING(126).BINARY,
       points: {
         type: DataTypes.INTEGER,
         defaultValue: 0
@@ -15,7 +15,7 @@ class User extends Model {
         defaultValue: 0
       },
       pushToken: DataTypes.STRING,
-      username: DataTypes.STRING,
+      username: DataTypes.STRING(126).BINARY,
     }, {
       indexes: [
         { unique: true, fields: ['email'] },
