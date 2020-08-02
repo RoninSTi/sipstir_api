@@ -78,12 +78,12 @@ class User extends Model {
       amount
     });
 
-    redis.zadd('leaderboard', amount, this.id);
-
     await points.setUser(this);
 
     this.points = this.points + amount;
     this.pointsBalance = this.pointsBalance + amount;
+
+    redis.zadd('leaderboard', points, this.id);
 
     await this.save();
   }

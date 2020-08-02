@@ -26,12 +26,8 @@ class Points extends Model {
       ]
     });
 
-    redis.flushall()
-
     rows.forEach(row => {
       const score = parseInt(row.getDataValue('score'));
-
-      console.log({ score, userId: row.userId })
 
       redis.zadd('leaderboard', score, row.userId);
     });
