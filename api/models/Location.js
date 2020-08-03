@@ -14,15 +14,7 @@ class Location extends Model {
           this.setDataValue('photo', JSON.stringify(value));
         }
       },
-      geometry: {
-        type: DataTypes.STRING,
-        get: function () {
-          return JSON.parse(this.getDataValue('geometry'));
-        },
-        set: function (value) {
-          this.setDataValue('geometry', JSON.stringify(value));
-        }
-      },
+      geometry: DataTypes.GEOMETRY('POINT'),
       placeId: DataTypes.STRING,
       vicinity: DataTypes.STRING
     }, {
@@ -48,9 +40,13 @@ class Location extends Model {
 
       const { html_attributions, ...photoData } = googlePlace.photos[0];
 
+      const { lat, lng } = googlePlace.geometry.location
+
+      const geometry = { type: 'Point', coordinates: [lng, lat]}
+
       const locationData = {
         name: googlePlace.name,
-        geometry: googlePlace.geometry,
+        geometry,
         photo: photoData,
         placeId,
         vicinity: googlePlace.vicinity
@@ -60,7 +56,7 @@ class Location extends Model {
 
       return location;
     } catch (error) {
-      console.log({ error });
+      throw error;
     }
   }
 }

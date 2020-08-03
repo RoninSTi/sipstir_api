@@ -1,4 +1,7 @@
-const { Comment, Guess, Post } = require('../db/db');
+const Sequelize = require('sequelize');
+const { Comment, Guess, Location, Post, sequelize } = require('../db/db');
+const Op = Sequelize.Op;
+
 
 async function getFeed(req, res) {
   const { feedType, userId } = req.params;
@@ -50,6 +53,32 @@ async function getFeed(req, res) {
           id: postIds
         }
       };
+    }
+
+    if (feedType === 'nearby') {
+      const { lat, lng, radius } = req.query;
+
+      const attributes = ['id'];
+
+      var location = sequelize.literal(`ST_GeomFromText('POINT(${lng} ${lat})')`);
+
+      var distance = sequelize.fn('ST_Distance_Sphere', sequelize.literal('geometry'), location);
+
+      attributes.push([distance, 'distance']);
+
+      const inRadius = await Location.findAll({
+        attributes,
+        where: sequelize.where(distance, { [Op.lte]: radius }),
+      })
+
+      const locationIds = inRadius.map(location => location.id)
+
+      query = {
+        ...query,
+        where: {
+          locationId: [locationIds]
+        }
+      }
     }
 
     const posts = await Post.findAll({ ...query });

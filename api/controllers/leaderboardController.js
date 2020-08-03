@@ -12,6 +12,8 @@ async function getLeaderboard(_, res) {
       })
       .filter(el => el !== undefined)
 
+    console.log({ top100, ids })
+
     const users = await User.findAll(
       {
         where: {

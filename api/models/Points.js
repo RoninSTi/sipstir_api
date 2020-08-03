@@ -26,6 +26,8 @@ class Points extends Model {
       ]
     });
 
+    redis.flushall()
+
     rows.forEach(row => {
       const score = parseInt(row.getDataValue('score'));
 
