@@ -22,7 +22,7 @@ services:
   barsnap-api:
     build:
       context: .
-      dockerfile: ./dev/Dockerfile
+      dockerfile: Dockerfile.dev
     environment:
       - NODE_ENV=development
     ports:

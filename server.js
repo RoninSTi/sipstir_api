@@ -76,27 +76,9 @@ const createServer = (options) => {
     dir: path.join(__dirname, 'api', 'routes'),
   });
 
-  // server.addHook('onRequest', async (request, reply) => {
-  //   try {
-  //     await request.jwtVerify();
-  //   } catch (err) {
-  //     reply.send(err);
-  //   }
-  // });
-
   const client = stream.default.connect(nconf.get('keys.stream.key'), nconf.get('keys.stream.secret'), nconf.get('keys.stream.appId'), { location: 'us-east' });
 
   server.decorate('client', client);
-
-  server.decorate('verifyJWT', function (request, reply, done) {
-      // your validation logic
-      done() // pass an error if the authentication fails
-  })
-
-  server.decorate('verifySwoop', function (request, reply, done) {
-    // your validation logic
-    done() // pass an error if the authentication fails
-  })
 
   // start the server
   server.listen(process.env.PORT, '0.0.0.0', (err) => {

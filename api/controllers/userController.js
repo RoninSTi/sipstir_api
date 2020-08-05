@@ -30,8 +30,6 @@ async function getUser(req, res) {
       return;
     }
 
-    // await this.client.user(`${user.id}`).getOrCreate();
-
     const response = await User.getSingle({ client: this.client, id, redis: this.redis });
 
     res.send(response);
@@ -51,8 +49,6 @@ async function getUserEmail(req, res) {
 
       return;
     }
-
-    // await this.client.user(`${user.id}`).getOrCreate();
 
     const response = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
 
