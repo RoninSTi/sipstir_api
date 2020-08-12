@@ -1,5 +1,5 @@
-const nconf = require('nconf');
 const jwtDecode = require('jwt-decode')
+const { User } = require('../db/db');
 
 const { getMe, getUser } = require('../adaptors/facebookAdaptor')
 
@@ -9,11 +9,17 @@ async function getAuthSwoopCallback(req, res) {
 
     const { email } = jwtDecode(id_token);
 
-    const accessToken = this.jwt.sign({ email }, {
+    const user = await User.findOrCreateByEmail({ client: this.client, email, redis: this.redis })
+
+    const { roles } = user
+
+    const accessToken = this.jwt.sign({ email, roles }, {
       expiresIn: 864000
     });
 
-    res.send({ accessToken })
+    const userResponse = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+
+    res.send({ accessToken, user: userResponse })
   } catch (error) {
     res.send(error)
   }
@@ -29,15 +35,23 @@ async function postAuthFacebook(req, res) {
 
     const { id } = meData
 
-    const userResponse = await getUser({ id, token: fbToken })
+    const fbUserResponse = await getUser({ id, token: fbToken })
 
-    const userData = await userResponse.json();
+    const userData = await fbUserResponse.json();
 
-    const accessToken = this.jwt.sign(userData, {
+    const { email, picture } = userData;
+
+    const user = await User.findOrCreateByEmail({ client: this.client, email, redis: this.redis, avatar: picture.data.url })
+
+    const { roles } = user
+
+    const accessToken = this.jwt.sign({ email, roles }, {
       expiresIn: 864000
     });
 
-    res.send({ accessToken })
+    const userResponse = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+
+    res.send({ accessToken, user: userResponse })
   } catch (error) {
     res.send(error)
   }

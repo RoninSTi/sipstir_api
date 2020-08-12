@@ -19,6 +19,16 @@ class User extends Model {
         defaultValue: 0
       },
       pushToken: DataTypes.STRING,
+      roles: {
+        type: DataTypes.TEXT,
+        defaultValue: '["user"]',
+        get: function () {
+          return JSON.parse(this.getDataValue('roles'));
+        },
+        set: function (value) {
+          this.setDataValue('roles', JSON.stringify(value));
+        },
+      },
       username: DataTypes.STRING(126).BINARY,
     }, {
       indexes: [
@@ -28,6 +38,35 @@ class User extends Model {
       sequelize,
       timestamps: true
     })
+  }
+
+  static async findOrCreateByEmail({ client, email, redis, ...userData }) {
+    const [user, created] = await this.findOrCreate({ where: { email } })
+
+    if (created) {
+      await user.addPoints({ amount: 0, redis });
+
+      await client.user(`${user.id}`).getOrCreate();
+    }
+
+    if (userData) {
+      const updates = Object
+        .keys(userData)
+        .map(key => {
+          if (!user[key]) {
+            user[key] = userData[key]
+
+            return user.save()
+          } else {
+            return null
+          }
+        })
+        .filter(element => element !== null)
+
+      await Promise.all(updates)
+    }
+
+    return user
   }
 
   static async getSingle({ client, id, redis }) {
