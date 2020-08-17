@@ -4,12 +4,9 @@ class Reward extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
       isActive: DataTypes.BOOLEAN,
-      discount: DataTypes.INTEGER,
-      image: DataTypes.STRING,
       message: DataTypes.STRING,
-      name: DataTypes.STRING,
       points: DataTypes.INTEGER,
-      subject: DataTypes.STRING
+      title: DataTypes.STRING,
     }, {
       sequelize,
       timestamps: true

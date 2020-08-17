@@ -1,14 +1,14 @@
 const { Model } = require('sequelize');
 
-class AccountMember extends Model {
+class AccountUser extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
       accountId: DataTypes.INTEGER,
-      memberId: DataTypes.INTEGER,
+      userId: DataTypes.INTEGER,
       role: {
         type: DataTypes.ENUM,
-        defaultValue: 'user',
-        values: ['admin', 'user']
+        defaultValue: 'admin',
+        values: ['admin', 'super-admin']
       }
     }, {
       sequelize,
@@ -18,5 +18,5 @@ class AccountMember extends Model {
 }
 
 module.exports = {
-  AccountMember
+  AccountUser
 }

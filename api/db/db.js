@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 const { Account } = require('../models/Account');
-const { AccountMember } = require('../models/AccountMember');
+const { AccountUser } = require('../models/AccountUser');
 const { Cheer } = require('../models/Cheer');
 const { Comment } = require('../models/Comment');
 const { Guess } = require('../models/Guess');
@@ -23,7 +23,7 @@ const sequelize = new Sequelize(process.env.JAWSDB_URL, {
 
 const models = {
   Account: Account.init(sequelize, Sequelize),
-  AccountMember: AccountMember.init(sequelize, Sequelize),
+  AccountUser: AccountUser.init(sequelize, Sequelize),
   Comment: Comment.init(sequelize, Sequelize),
   Cheer: Cheer.init(sequelize, Sequelize),
   Guess: Guess.init(sequelize, Sequelize),

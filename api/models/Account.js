@@ -4,8 +4,10 @@ const { createCustomer } = require('../adaptors/stripeAdaptor');
 class Account extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
-      name: DataTypes.STRING,
+      contactName: DataTypes.STRING,
       email: DataTypes.STRING,
+      name: DataTypes.STRING,
+      phone: DataTypes.STRING,
       stripeCustomerId: DataTypes.STRING
     }, {
       sequelize,
@@ -14,21 +16,16 @@ class Account extends Model {
   }
 
   static associate(models) {
-    this.memberAssociation = models.Account.belongsToMany(models.Member, {
-      through: 'AccountMember',
-      as: 'members',
+    this.memberAssociation = models.Account.belongsToMany(models.User, {
+      through: 'AccountUser',
+      as: 'users',
       foreignKey: 'accountId',
-      otherKey: 'memberId',
+      otherKey: 'userId',
     });
 
     this.locationAssociation = models.Account.belongsTo(models.Location, {
       as: 'location',
       foreignKey: 'locationId'
-    });
-
-    this.userAssociation = models.Account.belongsTo(models.User, {
-      as: 'user',
-      foreignKey: 'userId'
     });
   }
 
@@ -40,10 +37,10 @@ class Account extends Model {
     return account.toJSON();
   }
 
-  async createStripeAccount() {
+  async createStripeAccount({ stripe }) {
     if (!this.email) throw new Error('Account requires email')
 
-    const customer = await createCustomer(this.email);
+    const customer = await createCustomer({ stripe, email: this.email });
 
     this.stripeCustomerId = customer.id;
 

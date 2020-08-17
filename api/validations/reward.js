@@ -1,5 +1,21 @@
-const { Account } = require('../models/Account');
-const { Reward } = require('../models/Reward');
+const { Account, Reward } = require('../db/db');
+
+const validateDeleteReward = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        rewardId: { type: 'number'}
+      },
+      required: ['rewardId']
+    }
+  }
+}
 
 const validateGetAccountRewards = {
   preValidation: [
@@ -41,14 +57,11 @@ const validatePostReward = {
       properties: {
         accountId: { type: 'number' },
         isActive: { type: 'boolean' },
-        discount: { type: 'number' },
-        image: { type: 'string', format: 'url'},
         message: { type: 'string' },
-        name: { type: 'string' },
         points: { type: 'number' },
-        subject: { type: 'string' }
+        title: { type: 'string' }
       },
-      required: ['accountId', 'discount', 'points'],
+      required: ['accountId', 'message', 'points', 'title'],
     },
   },
 }
@@ -75,14 +88,11 @@ const validatePutReward = {
       type: 'object',
       properties: {
         isActive: { type: 'boolean' },
-        discount: { type: 'number' },
-        image: { type: 'string', format: 'url' },
         message: { type: 'string' },
-        name: { type: 'string' },
         points: { type: 'number' },
-        subject: { type: 'string' }
+        title: { type: 'string' }
       },
-      required: ['discount', 'points'],
+      required: ['message', 'points', 'title'],
     },
     params: {
       type: 'object',
@@ -95,6 +105,7 @@ const validatePutReward = {
 }
 
 module.exports = {
+  validateDeleteReward,
   validateGetAccountRewards,
   validatePostReward,
   validatePutReward

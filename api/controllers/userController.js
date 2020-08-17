@@ -38,6 +38,20 @@ async function getUser(req, res) {
   }
 }
 
+const getUserAccounts = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByPk(id);
+
+    const accounts = await user.getAccounts({ include: [{ all: true, nested: true }] });
+
+    res.send(accounts);
+  } catch (error) {
+    res.send(error)
+  }
+};
+
 async function getUserEmail(req, res) {
   const { email } = req.params;
 
@@ -176,6 +190,7 @@ const putUser = async (req, res) => {
 module.exports = {
   getCheckUsername,
   getUser,
+  getUserAccounts,
   getUserEmail,
   postUser,
   postUserFollow,

@@ -3,6 +3,8 @@ const { parseUserId } = require('../utils/stream');
 
 const { Expo } = require('expo-server-sdk')
 
+const md5 = require('md5');
+
 const expo = new Expo()
 
 class User extends Model {
@@ -40,13 +42,32 @@ class User extends Model {
     })
   }
 
+  static associate(models) {
+    this.association = models.User.belongsToMany(models.Account, {
+      through: 'AccountUser',
+      as: 'accounts',
+      foreignKey: 'userId',
+      otherKey: 'accountId',
+    });
+  }
+
   static async findOrCreateByEmail({ client, email, redis, ...userData }) {
     const [user, created] = await this.findOrCreate({ where: { email } })
 
     if (created) {
       await user.addPoints({ amount: 0, redis });
 
+      await user.setDefaultAvatar()
+
       await client.user(`${user.id}`).getOrCreate();
+
+      const domain = email.substring(email.lastIndexOf("@") + 1);
+
+      if (domain === 'barsnap.com') {
+        user.roles = [...user.roles, 'employee']
+
+        await user.save()
+      }
     }
 
     if (userData) {
@@ -144,6 +165,16 @@ class User extends Model {
     for (let chunk of chunks) {
       await expo.sendPushNotificationsAsync(chunk);
     }
+  }
+
+  async setDefaultAvatar() {
+    const emailHash = md5(this.email.toLowerCase().trim());
+
+    const avatar = `https://www.gravatar.com/avatar/${emailHash}?s=200&d=retro`
+
+    this.avatar = avatar
+
+    await this.save()
   }
 }
 

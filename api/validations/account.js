@@ -1,4 +1,4 @@
-const validateDeleteAccountMember = {
+const validateDeleteAccount = {
   preValidation: [
     async function (request) {
       return await request.jwtVerify()
@@ -11,11 +11,44 @@ const validateDeleteAccountMember = {
         accountId: {
           type: 'number'
         },
-        memberId: {
+      },
+      required: ['accountId']
+    }
+  }
+};
+
+const validateDeleteAccountUser = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        accountId: {
+          type: 'number'
+        },
+        userId: {
           type: 'number'
         }
       },
-      required: ['accountId', 'memberId']
+      required: ['accountId', 'userId']
+    }
+  }
+};
+
+const validateGetAccounts = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    querystring: {
+      page: { type: 'number' },
+      pageSize: { type: 'number' },
     }
   }
 };
@@ -26,38 +59,25 @@ const validatePostAccount = {
       return await request.jwtVerify()
     }
   ],
-  preHandler: [
-    function (request, _, done) {
-      request.bsCheckPermissions(['create:account'], done)
-    }
-  ],
   schema: {
     body: {
       type: 'object',
       properties: {
+        contactName: { type: 'string' },
         email: {
           type: 'string',
           format: 'email'
         },
-        members: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              email: { type: 'string', format: 'email' },
-              role: { type: 'string', enum: ['admin', 'user'] },
-            }
-          }
-        },
         name: { type: 'string' },
-        placeId: { type: 'string' }
+        placeId: { type: 'string' },
+        phone: { type: 'string' }
       },
-      required: ['name', 'members'],
+      required: ['contactName', 'email', 'name', 'phone', 'placeId'],
     },
   },
 }
 
-const validatePostAccountMemberAdd = {
+const validatePostAccountUserAdd = {
   preValidation: [
     async function (request) {
       return await request.jwtVerify()
@@ -68,21 +88,21 @@ const validatePostAccountMemberAdd = {
       type: 'object',
       properties: {
         email: { type: 'string', format: 'email' },
-        role: { type: 'string', enum: ['admin', 'user'] }
+        role: { type: 'string', enum: ['admin', 'super-admin'] }
       },
       required: ['email', 'role']
     },
     params: {
       type: 'object',
       properties: {
-        id: { type: 'number'}
+        accountId: { type: 'number'}
       },
-      required: ['id']
+      required: ['accountId']
     }
   }
 }
 
-const validatePutAccountMember = {
+const validatePutAccountUser = {
   preValidation: [
     async function (request) {
       return await request.jwtVerify()
@@ -93,23 +113,26 @@ const validatePutAccountMember = {
       type: 'object',
       properties: {
         email: { type: 'string', format: 'email' },
-        role: { type: 'string', enum: ['admin', 'user'] }
+        role: {
+          type: 'string', enum: ['admin', 'super-admin'] }
       }
     },
     params: {
       type: 'object',
       properties: {
         accountId: { type: 'number' },
-        memberId: { type: 'number' }
+        userId: { type: 'number' }
       },
-      required: ['accountId', 'memberId']
+      required: ['accountId', 'userId']
     }
   }
 }
 
 module.exports = {
-  validateDeleteAccountMember,
+  validateDeleteAccount,
+  validateDeleteAccountUser,
+  validateGetAccounts,
   validatePostAccount,
-  validatePostAccountMemberAdd,
-  validatePutAccountMember
+  validatePostAccountUserAdd,
+  validatePutAccountUser
 }

@@ -36,6 +36,33 @@ const validateGetUser = {
   }
 }
 
+const validateGetUserAccounts = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  preHandler: [
+    async function (request) {
+      const { id } = request.params;
+
+      const existingUser = await User.findByPk(id);
+
+      if (!existingUser) {
+        throw new Error('Member does not exist.');
+      }
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'number' }
+      }
+    }
+  }
+}
+
 const validateGetUserEmail = {
   preValidation: [
     async function (request) {
@@ -147,6 +174,7 @@ const validatePutUser = {
 module.exports = {
   validateGetCheckUsername,
   validateGetUser,
+  validateGetUserAccounts,
   validateGetUserEmail,
   validatePostUser,
   validatePostUserFollow,

@@ -1,5 +1,21 @@
 const { Account, Reward } = require('../db/db');
 
+const deleteReward = async (req, res) => {
+  const { rewardId } = req.params;
+
+  try {
+    await Reward.destroy({
+      where: {
+        id: rewardId
+      }
+    });
+
+    res.send(200);
+  } catch (error) {
+    res.send(error)
+  }
+}
+
 const getAccountRewards = async (req, res) => {
   const { accountId } = req.params;
 
@@ -40,6 +56,7 @@ const postReward = async (req, res) => {
 
 const putReward = async (req, res) => {
   const { ...rewardData } = req.body;
+
   const { rewardId } = req.params
 
   try {
@@ -62,6 +79,7 @@ const putReward = async (req, res) => {
 }
 
 module.exports = {
+  deleteReward,
   getAccountRewards,
   postReward,
   putReward

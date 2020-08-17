@@ -1,9 +1,4 @@
-const nconf = require('nconf');
-const STRIPE_KEY = nconf.get('keys.stripe.secret')
-
-const stripe = require('stripe')(STRIPE_KEY, { apiVersion: '' });
-
-const attachPaymentToCustomer = async ({ customerId, paymentMethodId }) => {
+const attachPaymentToCustomer = async ({ customerId, paymentMethodId, stripe }) => {
   await stripe.paymentMethods.attach(paymentMethodId, {
     customer: customerId,
   });
@@ -15,7 +10,7 @@ const attachPaymentToCustomer = async ({ customerId, paymentMethodId }) => {
   });
 }
 
-const createCustomer = async email => {
+const createCustomer = async({ email, stripe }) => {
   const customer = await stripe.customers.create({
     email,
   });
@@ -23,7 +18,7 @@ const createCustomer = async email => {
   return customer;
 };
 
-const createSubscription = async ({ customerId, priceId }) => {
+const createSubscription = async ({ customerId, priceId, stripe }) => {
   const subscription = await stripe.subscriptions.create({
     customer: customerId,
     items: [{ price: priceId }],
@@ -33,13 +28,13 @@ const createSubscription = async ({ customerId, priceId }) => {
   return subscription
 }
 
-const getProducts = async () => {
+const getProducts = async ({ stripe }) => {
   const products = await stripe.products.list()
 
   return products
 }
 
-const getPrices = async () => {
+const getPrices = async ({ stripe }) => {
   const prices = await stripe.prices.list()
 
   return prices

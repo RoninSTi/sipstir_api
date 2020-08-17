@@ -80,6 +80,10 @@ const createServer = (options) => {
 
   server.decorate('client', client);
 
+  const STRIPE_KEY = nconf.get('keys.stripe.secret')
+  const stripe = require('stripe')(STRIPE_KEY, { apiVersion: '' });
+  server.decorate('stripe', stripe);
+
   // start the server
   server.listen(process.env.PORT, '0.0.0.0', (err) => {
     if (err) {
