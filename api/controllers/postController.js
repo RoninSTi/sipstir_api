@@ -1,4 +1,4 @@
-const { Cheer, Comment, Guess, Location, Post, User } = require('../db/db');
+const { Cheer, Comment, Guess, Location, Post, Reward, User } = require('../db/db');
 
 const getPost = async (req, res) => {
   const { postId } = req.params;
@@ -212,7 +212,17 @@ async function postGuess(req, res) {
       });
     }
 
-    const response = await Post.getSingle({ id: postId, userId: createdById });
+    const postResponse = await Post.getSingle({ id: postId, userId: createdById });
+
+    const rewardResponse = await Reward.getRewardForLocationGuess({
+      guessLocationId: location ? location.id : null,
+      postLocationId: post.locationId
+    })
+
+    const response = {
+      post: postResponse,
+      reward: rewardResponse
+    }
 
     res.send(response);
   } catch (error) {

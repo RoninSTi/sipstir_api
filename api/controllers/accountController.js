@@ -51,12 +51,13 @@ async function getAccounts(req, res) {
 }
 
 async function postAccount(req, res) {
-  const { contactName, email, name, placeId, phone } = req.body;
+  const { contactName, email, image, name, placeId, phone } = req.body;
 
   try {
     const account = await Account.create({
       contactName,
       email,
+      image,
       name,
       phone,
     });
@@ -79,6 +80,32 @@ async function postAccount(req, res) {
     res.send(error);
   }
 };
+
+async function putAccount(req, res) {
+  const { accountId } = req.params;
+
+  const updatedData = req.body;
+
+  try {
+    const account = await Account.findByPk(accountId);
+
+    if (updatedData.email !== account.email) {
+      await addUserToAccount({ accountId, email: updatedData.email, role: 'super-admin' })
+    }
+
+    Object.keys(updatedData).forEach(key => {
+      account[key] = updatedData[key]
+    })
+
+    await account.save();
+
+    const response = await Account.getSingle(accountId);
+
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+}
 
 const postAccountUserAdd = async (req, res) => {
   const { email, role } = req.body;
@@ -160,5 +187,6 @@ module.exports = {
   getAccounts,
   postAccount,
   postAccountUserAdd,
+  putAccount,
   putAccountUser
 };

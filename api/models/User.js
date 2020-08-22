@@ -5,6 +5,8 @@ const { Expo } = require('expo-server-sdk')
 
 const md5 = require('md5');
 
+const crypto = require('crypto')
+
 const expo = new Expo()
 
 class User extends Model {
@@ -12,6 +14,12 @@ class User extends Model {
     return super.init({
       avatar: DataTypes.STRING,
       email: DataTypes.STRING(126).BINARY,
+      password: {
+        type: DataTypes.STRING,
+        get() {
+          return () => this.getDataValue('password')
+        }
+      },
       points: {
         type: DataTypes.INTEGER,
         defaultValue: 0
@@ -31,8 +39,26 @@ class User extends Model {
           this.setDataValue('roles', JSON.stringify(value));
         },
       },
+      salt: {
+        type: DataTypes.STRING,
+        get() {
+          return () => this.getDataValue('salt')
+        }
+      },
       username: DataTypes.STRING(126).BINARY,
     }, {
+      hooks: {
+        beforeCreate: function (user) {
+          User.setSaltAndPassword(user)
+
+          return user
+        },
+        beforeUpdate: function (user) {
+          User.setSaltAndPassword(user)
+
+          return user
+        }
+      },
       indexes: [
         { unique: true, fields: ['email'] },
         { unique: true, fields: ['username'] }
@@ -49,6 +75,25 @@ class User extends Model {
       foreignKey: 'userId',
       otherKey: 'accountId',
     });
+  }
+
+  static generateSalt() {
+    return crypto.randomBytes(16).toString('base64')
+  }
+
+  static encryptPassword(plainText, salt) {
+    return crypto
+      .createHash('RSA-SHA256')
+      .update(plainText)
+      .update(salt)
+      .digest('hex')
+  }
+
+  static setSaltAndPassword(user) {
+    if (user.changed('password')) {
+      user.salt = User.generateSalt()
+      user.password = User.encryptPassword(user.password(), user.salt())
+    }
   }
 
   static async findOrCreateByEmail({ client, email, redis, ...userData }) {
@@ -71,20 +116,18 @@ class User extends Model {
     }
 
     if (userData) {
-      const updates = Object
+      Object
         .keys(userData)
-        .map(key => {
-          if (!user[key]) {
+        .forEach(key => {
+          if (!user.getDataValue(key)) {
+            console.log('updating')
             user[key] = userData[key]
-
-            return user.save()
           } else {
             return null
           }
         })
-        .filter(element => element !== null)
 
-      await Promise.all(updates)
+      await user.save()
     }
 
     return user
@@ -146,6 +189,10 @@ class User extends Model {
     redis.zadd('leaderboard', this.points, this.id);
 
     await this.save();
+  }
+
+  correctPassword(enteredPassword) {
+    return User.encryptPassword(enteredPassword, this.salt()) === this.password()
   }
 
   async sendPush({ body, data }) {

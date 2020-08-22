@@ -1,4 +1,6 @@
-const { Account, Reward } = require('../db/db');
+const Sequelize = require('sequelize');
+const { Account, Location, Reward, sequelize } = require('../db/db');
+const Op = Sequelize.Op;
 
 const deleteReward = async (req, res) => {
   const { rewardId } = req.params;
@@ -34,6 +36,110 @@ const getAccountRewards = async (req, res) => {
   }
 }
 
+async function getRewards(req, res) {
+  const { lat, lng, page = 1, pageSize = 100, radius = 40000, search } = req.query;
+
+  const offset = (page * pageSize) - pageSize;
+  const limit = pageSize;
+
+  try {
+    if (search) {
+      const accounts = await Account.findAll({
+        where: {
+          name: sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), 'LIKE', '%' + search + '%')
+        }
+      })
+
+      const accountIds = accounts.map(account => account.id)
+
+      const rewards = await Reward.findAll({
+        include: [{ all: true, nested: true }],
+        order: [
+          [{ model: Account, as: 'account' }, 'name', 'ASC'],
+        ],
+        where: {
+          accountId: [accountIds],
+        }
+      })
+
+      if (!rewards) {
+        res.send([])
+      }
+
+      const response = rewards.map(reward => reward.toJSON())
+
+      res.send(response)
+    } else if (lat && lng) {
+      const attributes = ['id'];
+
+      var location = sequelize.literal(`ST_GeomFromText('POINT(${lng} ${lat})')`);
+
+      var distance = sequelize.fn('ST_Distance_Sphere', sequelize.literal('geometry'), location);
+
+      attributes.push([distance, 'distance']);
+
+      const inRadius = await Location.findAll({
+        attributes,
+        where: sequelize.where(distance, { [Op.lte]: radius }),
+      })
+
+      const locationIds = inRadius.map(location => location.id)
+
+      const accounts = await Account.findAll({
+        where: {
+          locationId: [locationIds]
+        }
+      })
+
+      if (!accounts) {
+        res.send([])
+      }
+
+      const accountIds = accounts.map(account => account.id)
+
+      const rewards = await Reward.findAll({
+        include: [{ all: true, nested: true }],
+        limit,
+        offset,
+        where: {
+          accountId: [accountIds],
+          isActive: true,
+        }
+      })
+
+      if (!rewards) {
+        res.send([])
+      }
+
+      const response = rewards.map(reward => reward.toJSON())
+
+      res.send(response)
+    } else {
+      const rewards = await Reward.findAll({
+        include: [{ all: true, nested: true }],
+        limit,
+        offset,
+        order: [
+          [{ model: Account, as: 'account' }, 'name', 'ASC'],
+        ],
+        where: {
+          isActive: true,
+        }
+      })
+
+      if (!rewards) {
+        res.send([])
+      }
+
+      const response = rewards.map(reward => reward.toJSON())
+
+      res.send(response)
+    }
+  } catch (error) {
+    res.send(error)
+  }
+}
+
 const postReward = async (req, res) => {
   const { accountId, ...rewardData } = req.body
 
@@ -63,7 +169,7 @@ const putReward = async (req, res) => {
     const reward = await Reward.findByPk(rewardId);
 
     if (rewardData.isActive) {
-      await Reward.resetActiveForAccount(rewardData.accountId);
+      await Reward.resetActiveForAccount(reward.accountId);
     }
 
     Object.keys(rewardData).forEach(key => {
@@ -81,6 +187,7 @@ const putReward = async (req, res) => {
 module.exports = {
   deleteReward,
   getAccountRewards,
+  getRewards,
   postReward,
   putReward
 };

@@ -6,6 +6,7 @@ class Account extends Model {
     return super.init({
       contactName: DataTypes.STRING,
       email: DataTypes.STRING,
+      image: DataTypes.STRING,
       name: DataTypes.STRING,
       phone: DataTypes.STRING,
       stripeCustomerId: DataTypes.STRING

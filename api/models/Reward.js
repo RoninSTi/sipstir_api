@@ -31,6 +31,83 @@ class Reward extends Model {
 
     return Reward.update({ isActive: false }, { where: { id: ids } });
   }
+
+  static async canAccess({ req }) {
+    const { accounts } = req.user;
+    const { rewardId } = req.params;
+
+    const reward = await this.findByPk(rewardId)
+
+    const canAccess = accounts.some(account => account.accountId === reward.accountId)
+
+    return canAccess
+  }
+
+  static async getRandomReward() {
+    const reward = await this.findOne({
+      where: {
+        isActive: true
+      },
+      order: 'rand()'
+    })
+
+    return reward
+  }
+
+  static async getRewardForLocationGuess({ guessLocationId, postLocationId }) {
+    const { Account } = this.sequelize.models;
+
+    let account = null
+
+    let reward = null
+
+    let rewardResponse = null
+
+    account = await Account.findOne({
+      where: {
+        locationId: postLocationId
+      }
+    })
+
+    if (!account && guessLocationId) {
+      account = await Account.findOne({
+        where: {
+          locationId
+        }
+      })
+    }
+
+    if (!account) {
+      reward = await getRandomReward()
+    } else {
+      reward = await this.findOne({
+        where: {
+          isActive: true,
+          accountId: account.id
+        }
+      })
+    }
+
+    if (!reward) {
+      reward = await this.getRandomReward()
+    }
+
+    if (reward) {
+      const rewardAccount = await Account.findOne({
+        where: {
+          id: reward.accountId
+        },
+        include: [{ all: true, nested: true }]
+      })
+
+      rewardResponse = {
+        reward: reward.toJSON(),
+        account: rewardAccount.toJSON()
+      }
+    }
+
+    return rewardResponse
+  }
 }
 
 module.exports = {
