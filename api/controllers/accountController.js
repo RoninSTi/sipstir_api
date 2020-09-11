@@ -1,4 +1,4 @@
-const { Account, AccountUser, Location, User } = require('../db/db');
+const { Account, AccountUser, Location, PaymentMethod, Subscription, User } = require('../db/db');
 
 const addUserToAccount = async ({ accountId, email, role }) => {
   const [user, created] = await User.findOrCreate({
@@ -43,6 +43,44 @@ async function getAccounts(req, res) {
     const promises = accounts.map(account => Account.getSingle(account.id))
 
     const response = await Promise.all(promises)
+
+    res.send(response)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
+async function getPaymentMethod(req, res) {
+  const { accountId } = req.params
+
+  try {
+    const paymentMethod = await PaymentMethod.findOne({
+      where: {
+        accountId: accountId,
+        isDefault: true
+      }
+    })
+
+    const response = paymentMethod ? paymentMethod.toJSON() : null
+
+    res.send(response)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
+async function getSubscription(req, res) {
+  const { accountId } = req.params
+
+  try {
+    const subscription = await Subscription.findOne({
+      where: {
+        accountId: accountId,
+        isDeleted: false
+      }
+    })
+
+    const response = subscription ? subscription.toJSON() : null
 
     res.send(response)
   } catch (error) {
@@ -185,6 +223,8 @@ module.exports = {
   deleteAccount,
   deleteAccountUser,
   getAccounts,
+  getPaymentMethod,
+  getSubscription,
   postAccount,
   postAccountUserAdd,
   putAccount,

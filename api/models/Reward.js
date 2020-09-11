@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+
 const { Model } = require('sequelize');
 
 class Reward extends Model {
@@ -48,14 +50,16 @@ class Reward extends Model {
       where: {
         isActive: true
       },
-      order: 'rand()'
+      order: [
+        [Sequelize.fn('RAND')]
+      ]
     })
 
     return reward
   }
 
   static async getRewardForLocationGuess({ guessLocationId, postLocationId }) {
-    const { Account } = this.sequelize.models;
+    const { Account, Reward } = this.sequelize.models;
 
     let account = null
 
@@ -72,13 +76,13 @@ class Reward extends Model {
     if (!account && guessLocationId) {
       account = await Account.findOne({
         where: {
-          locationId
+          locationId: guessLocationId
         }
       })
     }
 
     if (!account) {
-      reward = await getRandomReward()
+      reward = await Reward.getRandomReward()
     } else {
       reward = await this.findOne({
         where: {
@@ -89,7 +93,7 @@ class Reward extends Model {
     }
 
     if (!reward) {
-      reward = await this.getRandomReward()
+      reward = await Reward.getRandomReward()
     }
 
     if (reward) {

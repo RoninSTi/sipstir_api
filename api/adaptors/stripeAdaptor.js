@@ -28,6 +28,18 @@ const createSubscription = async ({ customerId, priceId, stripe }) => {
   return subscription
 }
 
+const deleteSubscription = async ({ subscriptionId, stripe }) => {
+  const deleted = await stripe.subscriptions.del(subscriptionId)
+
+  return deleted
+}
+
+const getPaymentMethod = async ({ paymentMethodId, stripe }) => {
+  const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId)
+
+  return paymentMethod
+}
+
 const getProducts = async ({ stripe }) => {
   const products = await stripe.products.list()
 
@@ -44,6 +56,8 @@ module.exports = {
   attachPaymentToCustomer,
   createCustomer,
   createSubscription,
+  deleteSubscription,
+  getPaymentMethod,
   getPrices,
   getProducts
 };

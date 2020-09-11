@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { Account, Location, Reward, sequelize } = require('../db/db');
+const { Account, Location, Reward, RewardRedemption, User, sequelize } = require('../db/db');
 const Op = Sequelize.Op;
 
 const deleteReward = async (req, res) => {
@@ -160,6 +160,32 @@ const postReward = async (req, res) => {
   }
 }
 
+async function postRewardRedeem(req, res) {
+  const { rewardId } = req.params
+
+  const { id: userId } = req.user
+
+  try {
+    const reward = await Reward.findByPk(rewardId)
+
+    const user = await User.findByPk(userId)
+
+    const rewardRedemption = await RewardRedemption.create();
+
+    await rewardRedemption.setUser(user)
+
+    await rewardRedemption.setReward(reward)
+
+    await user.redeemReward({ reward })
+
+    const response = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+
+    res.send(response)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
 const putReward = async (req, res) => {
   const { ...rewardData } = req.body;
 
@@ -189,5 +215,6 @@ module.exports = {
   getAccountRewards,
   getRewards,
   postReward,
+  postRewardRedeem,
   putReward
 };

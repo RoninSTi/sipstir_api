@@ -85,6 +85,86 @@ const validateGetAccounts = {
   }
 };
 
+const validateGetPaymentMethod = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  preHandler: [
+    async function (req) {
+      const { accountId } = req.params;
+
+      const account = await Account.findByPk(accountId);
+
+      if (!account) {
+        throw new Error('Account does not exist');
+      }
+    },
+    async function (req) {
+      const { accounts } = req.user
+      const { accountId } = req.params
+
+      const canAccess = accounts.some(account => account.accountId === accountId)
+
+      if (!canAccess) {
+        throw new Error('Not a member of the account')
+      }
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        accountId: {
+          type: 'number'
+        },
+      },
+      required: ['accountId']
+    }
+  }
+}
+
+const validateGetSubscription = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  preHandler: [
+    async function (req) {
+      const { accountId } = req.params;
+
+      const account = await Account.findByPk(accountId);
+
+      if (!account) {
+        throw new Error('Account does not exist');
+      }
+    },
+    async function (req) {
+      const { accounts } = req.user
+      const { accountId } = req.params
+
+      const canAccess = accounts.some(account => account.accountId === accountId)
+
+      if (!canAccess) {
+        throw new Error('Not a member of the account')
+      }
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        accountId: {
+          type: 'number'
+        },
+      },
+      required: ['accountId']
+    }
+  }
+}
+
 const validatePostAccount = {
   preValidation: [
     async function (request) {
@@ -200,15 +280,15 @@ const validatePutAccount = {
     body: {
       type: 'object',
       properties: {
-        contactName: { type: 'string' },
+        contactName: { type: ['string', 'null'] },
         email: {
-          type: 'string',
+          type: ['string', 'null'],
           format: 'email'
         },
         image: { type: ['string', 'null'], format: 'url' },
-        name: { type: 'string' },
-        placeId: { type: 'string' },
-        phone: { type: 'string' }
+        name: { type: ['string', 'null'] },
+        placeId: { type: ['string', 'null'] },
+        phone: { type: ['string', 'null']  }
       }
     },
     params: {
@@ -272,6 +352,8 @@ module.exports = {
   validateDeleteAccount,
   validateDeleteAccountUser,
   validateGetAccounts,
+  validateGetPaymentMethod,
+  validateGetSubscription,
   validatePostAccount,
   validatePostAccountUserAdd,
   validatePutAccount,

@@ -195,6 +195,12 @@ class User extends Model {
     return User.encryptPassword(enteredPassword, this.salt()) === this.password()
   }
 
+  async redeemReward({ reward }) {
+    this.pointsBalance = this.pointsBalance - reward.points;
+
+    return this.save();
+  }
+
   async sendPush({ body, data }) {
     const pushToken = this.pushToken;
 

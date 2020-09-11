@@ -7,9 +7,11 @@ const { Comment } = require('../models/Comment');
 const { Guess } = require('../models/Guess');
 const { Location } = require('../models/Location');
 const { Member } = require('../models/Member');
+const { PaymentMethod } = require('../models/PaymentMethod');
 const { Points } = require('../models/Points');
 const { Post } = require('../models/Post');
 const { Reward } = require('../models/Reward');
+const { RewardRedemption } = require('../models/RewardRedemption');
 const { Subscription } = require('../models/Subscription');
 const { User } = require('../models/User');
 
@@ -29,9 +31,11 @@ const models = {
   Guess: Guess.init(sequelize, Sequelize),
   Location: Location.init(sequelize, Sequelize),
   Member: Member.init(sequelize, Sequelize),
+  PaymentMethod: PaymentMethod.init(sequelize, Sequelize),
   Points: Points.init(sequelize, Sequelize),
   Post: Post.init(sequelize, Sequelize),
   Reward: Reward.init(sequelize, Sequelize),
+  RewardRedemption: RewardRedemption.init(sequelize, Sequelize),
   Subscription: Subscription.init(sequelize, Sequelize),
   User: User.init(sequelize, Sequelize)
 }

@@ -38,7 +38,15 @@ class Location extends Model {
 
       const { result: googlePlace } = responseJSON;
 
-      const { html_attributions, ...photoData } = googlePlace.photos[0];
+      const photos = googlePlace.photos || []
+
+      let photo = null
+
+      if (photos.length > 0) {
+        const { html_attributions, ...photoData } = googlePlace.photos[0];
+
+        photo = photoData
+      }
 
       const { lat, lng } = googlePlace.geometry.location
 
@@ -47,7 +55,7 @@ class Location extends Model {
       const locationData = {
         name: googlePlace.name,
         geometry,
-        photo: photoData,
+        photo,
         placeId,
         vicinity: googlePlace.vicinity
       };

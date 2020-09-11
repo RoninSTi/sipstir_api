@@ -15,13 +15,13 @@ async function getAuthSwoopCallback(req, res) {
 
     const accountTokenData = accounts.map(account => ({ accountId: account.id, role: account.AccountUser.role}))
 
-    const { roles } = user
+    const { id, roles } = user
 
-    const accessToken = this.jwt.sign({ email, roles, accounts: accountTokenData }, {
+    const accessToken = this.jwt.sign({ email, id, roles, accounts: accountTokenData }, {
       expiresIn: 864000
     });
 
-    const userResponse = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+    const userResponse = await User.getSingle({ client: this.client, id, redis: this.redis });
 
     res.send({ accessToken, user: userResponse })
   } catch (error) {
@@ -47,13 +47,13 @@ async function postAuthFacebook(req, res) {
 
     const user = await User.findOrCreateByEmail({ client: this.client, email, redis: this.redis, avatar: picture.data.url })
 
-    const { roles } = user
+    const { id: userId, roles } = user
 
-    const accessToken = this.jwt.sign({ email, roles }, {
+    const accessToken = this.jwt.sign({ email, id: userId, roles }, {
       expiresIn: 864000
     });
 
-    const userResponse = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+    const userResponse = await User.getSingle({ client: this.client, id: userId, redis: this.redis });
 
     res.send({ accessToken, user: userResponse })
   } catch (error) {
@@ -71,13 +71,13 @@ async function postLogin(req, res) {
       }
     });
 
-    const { roles } = user;
+    const { id, roles } = user;
 
-    const accessToken = this.jwt.sign({ email, roles }, {
+    const accessToken = this.jwt.sign({ email, id, roles }, {
       expiresIn: 864000
     });
 
-    const userResponse = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+    const userResponse = await User.getSingle({ client: this.client, id, redis: this.redis });
 
     res.send({ accessToken, user: userResponse })
   } catch (error) {

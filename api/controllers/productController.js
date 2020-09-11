@@ -3,16 +3,16 @@ const {
   getProducts: getStripeProducts
 } = require('../adaptors/stripeAdaptor');
 
-const getPricesForProduct = ({ product, prices }) => {
+function getPricesForProduct({ product, prices }) {
   return prices
     .map(price => price.product === product.id ? price : null)
     .filter(el => el !== null)
 }
 
-const getProducts = async (_, res) => {
+async function getProducts(_, res) {
   try {
-    const { data: products } = await getStripeProducts();
-    const { data: prices } = await getStripePrices();
+    const { data: products } = await getStripeProducts({ stripe: this.stripe});
+    const { data: prices } = await getStripePrices({ stripe: this.stripe });
 
     const response = products.map(product => {
       const productPrices = getPricesForProduct({ product, prices });

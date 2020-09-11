@@ -126,6 +126,38 @@ const validatePostReward = {
   },
 }
 
+const validatePostRewardRedeem = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  preHandler: [
+    async function (req) {
+      const { rewardId } = req.params;
+
+      const reward = await Reward.findByPk(rewardId);
+
+      if (!reward) {
+        throw new Error('Reward does not exist');
+      }
+
+      if (!reward.isActive) {
+        throw new Error('Reward is not active');
+      }
+    },
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        rewardId: { type: 'number' },
+      },
+      required: ['rewardId'],
+    },
+  },
+}
+
 const validatePutReward = {
   preValidation: [
     async function (request) {
@@ -176,5 +208,6 @@ module.exports = {
   validateGetAccountRewards,
   validateGetRewards,
   validatePostReward,
+  validatePostRewardRedeem,
   validatePutReward
 }

@@ -1,12 +1,74 @@
 const { User } = require('../db/db');
 
+async function getAccountActivity(req, res) {
+  const { accountId } = req.params
+
+  const { page = 1, pageSize = 100 } = req.query;
+
+  const offset = (page * pageSize) - pageSize;
+  const limit = pageSize;
+
+  try {
+    const activityFeed = this.client.feed('account_notification', `${accountId}`)
+
+    const activityFeedResponse = await activityFeed.get({ limit, offset })
+
+    const activityObjects = activityFeedResponse.results
+
+    const rawResponse = []
+
+    activityObjects.forEach(({ activities }) => {
+      activities.forEach(activity => {
+        console.log({ activity })
+        const activityResponse = {
+          createdAt: activity.time,
+          createdById: parseInt(activity.actor),
+          message: activity.message,
+          sortDate: new Date(activity.time),
+        };
+
+        rawResponse.push(activityResponse);
+      });
+    });
+
+    console.log({ rawResponse })
+
+    const createdByUserIds = rawResponse.map(rr => rr.createdById)
+
+    const distinctUserIds = [...new Set(createdByUserIds)];
+
+    const users = await User.findAll(
+      {
+        where: {
+          id: distinctUserIds
+        }
+      }
+    );
+
+    const sortedActivities = rawResponse.slice().sort((a, b) => b.sortDate - a.sortDate);
+
+    const response = sortedActivities.map(activity => {
+      const createdBy = users.find(u => u.id === activity.createdById).toJSON();
+
+      return {
+        createdAt: activity.createdAt,
+        createdBy,
+        message: activity.message,
+      }
+    });
+
+    res.send(response)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
 async function getActivity(req, res) {
   const { userId } = req.params;
   const { page = 1, pageSize = 100 } = req.query;
 
   const offset = (page * pageSize) - pageSize;
   const limit = pageSize;
-
 
   try {
     const activityFeed = this.client.feed('notification', `${userId}`);
@@ -146,5 +208,6 @@ async function getActivity(req, res) {
 };
 
 module.exports = {
+  getAccountActivity,
   getActivity
 };

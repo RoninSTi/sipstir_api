@@ -23,11 +23,13 @@ async function getLeaderboard(_, res) {
     const response = ids.map((id, index)=> {
       const user = users.find(user => user.id === parseInt(id));
 
+      if (user.points === 0) return null
+
       return {
         ...user.toJSON(),
         allTimeLeaderboardPosition: index + 1
       };
-    });
+    }).filter(el => el !== null);
 
     res.send(response);
   } catch (error) {

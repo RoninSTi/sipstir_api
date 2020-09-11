@@ -7,6 +7,10 @@ class Account extends Model {
       contactName: DataTypes.STRING,
       email: DataTypes.STRING,
       image: DataTypes.STRING,
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
       name: DataTypes.STRING,
       phone: DataTypes.STRING,
       stripeCustomerId: DataTypes.STRING
