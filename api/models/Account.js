@@ -13,7 +13,8 @@ class Account extends Model {
       },
       name: DataTypes.STRING,
       phone: DataTypes.STRING,
-      stripeCustomerId: DataTypes.STRING
+      stripeCustomerId: DataTypes.STRING,
+      url: DataTypes.STRING
     }, {
       sequelize,
       timestamps: true

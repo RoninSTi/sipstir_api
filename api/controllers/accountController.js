@@ -89,7 +89,7 @@ async function getSubscription(req, res) {
 }
 
 async function postAccount(req, res) {
-  const { contactName, email, image, name, placeId, phone } = req.body;
+  const { contactName, email, image, name, placeId, phone, url } = req.body;
 
   try {
     const account = await Account.create({
@@ -98,6 +98,7 @@ async function postAccount(req, res) {
       image,
       name,
       phone,
+      url,
     });
 
     const setupTasks = [

@@ -65,7 +65,7 @@ async function postGuessComment(req, res) {
     if (createdById !== post.createdById) {
       const postUser = await User.findByPk(post.createdById)
 
-      const postMessage = `${user.username} commented on a guess in your BarSnap`
+      const postMessage = `${user.username} commented on a guess in your post`
 
       const postCommentActivity = {
         actor: `${createdById}`,

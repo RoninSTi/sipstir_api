@@ -108,7 +108,7 @@ class User extends Model {
 
       const domain = email.substring(email.lastIndexOf("@") + 1);
 
-      if (domain === 'barsnap.com') {
+      if (domain === 'sipstir.app') {
         user.roles = [...user.roles, 'employee']
 
         await user.save()

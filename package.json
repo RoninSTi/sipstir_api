@@ -1,7 +1,7 @@
 {
-  "name": "barsnap-api",
+  "name": "sipstir-api",
   "version": "1.0.0",
-  "description": "Barsnap API",
+  "description": "SipStir API",
   "main": "./server.js",
   "scripts": {
     "start": "./node_modules/nodemon/bin/nodemon.js ./server.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/barsnap-engineering/barsnap-api.git"
+    "url": "git+https://github.com/RoninSTi/sipstir_api.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/barsnap-engineering/barsnap-api/issues"
+    "url": "https://github.com/RoninSTi/sipstir_api.git/issues"
   },
-  "homepage": "https://gitlab.com/barsnap-engineering/barsnap-api#readme",
+  "homepage": "https://github.com/RoninSTi/sipstir_api.git#readme",
   "dependencies": {
     "aws-sdk": "^2.701.0",
     "crypto": "^1.0.1",

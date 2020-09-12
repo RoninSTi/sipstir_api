@@ -2,7 +2,7 @@
 
 var fp = require('fastify-plugin')
 
-function barsnapCheckPermissions(fastify, _, next) {
+function sipstirCheckPermissions(fastify, _, next) {
   fastify.decorateRequest('bsCheckPermissions', checkPermissions)
 
   next()
@@ -31,7 +31,7 @@ function barsnapCheckPermissions(fastify, _, next) {
   }
 }
 
-module.exports = fp(barsnapCheckPermissions, {
+module.exports = fp(sipstirCheckPermissions, {
   fastify: '>=1.0.0-rc.1',
   name: 'fastify-jwt-authz'
 })

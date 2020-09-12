@@ -31,8 +31,6 @@ async function getAccountActivity(req, res) {
       });
     });
 
-    console.log({ rawResponse })
-
     const createdByUserIds = rawResponse.map(rr => rr.createdById)
 
     const distinctUserIds = [...new Set(createdByUserIds)];
