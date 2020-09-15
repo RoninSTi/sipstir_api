@@ -55,6 +55,24 @@ async function getFeed(req, res) {
       };
     }
 
+    if (feedType === 'location') {
+      const { locationId } = req.query
+
+      const comparisionTime = new Date()
+
+      comparisionTime.setHours(comparisionTime.getHours - 12);
+
+      query = {
+        ...query,
+        where: {
+          locationId,
+          createdAt: {
+            [Op.lte]: comparisionTime
+          }
+        }
+      }
+    }
+
     if (feedType === 'nearby') {
       const { lat, lng, radius } = req.query;
 

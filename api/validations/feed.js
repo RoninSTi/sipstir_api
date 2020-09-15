@@ -8,7 +8,7 @@ const validateGetFeed = {
     params: {
       type: 'object',
       properties: {
-        feedType: { type: 'string', enum: ['following', 'main', 'nearby', 'user'] },
+        feedType: { type: 'string', enum: ['following', 'location', 'main', 'nearby', 'user'] },
         userId: { type: 'number' }
       },
       required: ['feedType', 'userId']
@@ -16,6 +16,7 @@ const validateGetFeed = {
     querystring: {
       lat: { type: 'number' },
       lng: { type: 'number' },
+      locationId: { type: 'number'},
       page: { type: 'number' },
       pageSize: { type: 'number' },
       radius: { type: 'number' }

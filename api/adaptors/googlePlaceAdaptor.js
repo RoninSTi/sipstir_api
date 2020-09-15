@@ -9,7 +9,7 @@ const getPlaceDetails = (id) => {
   const key = nconf.get('keys.google.googlePlaceApiKey');
 
   return getRequest({
-    url: joinUrl(googlePlaceApiUrl, `details/json?place_id=${id}&fields=name,photos,vicinity,geometry/location&key=${key}`),
+    url: joinUrl(googlePlaceApiUrl, `details/json?place_id=${id}&fields=formatted_phone_number,name,photos,vicinity,website,geometry/location&key=${key}`),
   })
 }
 

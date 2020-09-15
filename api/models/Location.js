@@ -5,6 +5,7 @@ class Location extends Model {
   static init(sequelize, DataTypes) {
     return super.init({
       name: DataTypes.STRING,
+      phone: DataTypes.STRING,
       photo: {
         type: DataTypes.STRING,
         get: function () {
@@ -16,6 +17,7 @@ class Location extends Model {
       },
       geometry: DataTypes.GEOMETRY('POINT'),
       placeId: DataTypes.STRING,
+      url: DataTypes.STRING,
       vicinity: DataTypes.STRING
     }, {
       sequelize,
@@ -57,6 +59,8 @@ class Location extends Model {
         geometry,
         photo,
         placeId,
+        phone: googlePlace.formatted_phone_number,
+        url: googlePlace.website,
         vicinity: googlePlace.vicinity
       };
 
