@@ -1,20 +1,20 @@
 push-container-staging:
-	heroku container:push web --app pure-temple-78419 --recursive
+	heroku container:push web --app sipstir-api-staging --recursive
 
 push-container-production:
-	heroku container:push web --app barsnap-api-prod --recursive
+	heroku container:push web --app sipstir-api-prod --recursive
 
 release-container-staging:
-	heroku container:release web --app pure-temple-78419
+	heroku container:release web --app sipstir-api-staging
 
 release-container-prod:
-	heroku container:release web --app barsnap-api-prod
+	heroku container:release web --app sipstir-api-prod
 
 logs-staging:
-	heroku logs --tail --app pure-temple-78419
+	heroku logs --tail --app sipstir-api-staging
 
 logs-prod:
-	heroku logs --tail --app barsnap-api-prod
+	heroku logs --tail --app sipstir-api-prod
 
 staging: push-container-staging release-container-staging
 
