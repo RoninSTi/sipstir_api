@@ -64,7 +64,7 @@ const createServer = (options) => {
         return;
       }
 
-      if (origin === 'https://barsnap-staging.herokuapp.com') {
+      if (origin === 'https://staging.sipstir.app') {
         cb(null, true);
         return;
       }
@@ -83,6 +83,18 @@ const createServer = (options) => {
   const STRIPE_KEY = nconf.get('keys.stripe.secret')
   const stripe = require('stripe')(STRIPE_KEY, { apiVersion: '' });
   server.decorate('stripe', stripe);
+
+  const aws = require('aws-sdk');
+
+  const AWS_ACCESS_KEY_ID = nconf.get('keys.amazon.AWSAccessKeyId');
+  const AWS_SECRET_KEY = nconf.get('keys.amazon.AWSSecretKey');
+
+  aws.config.update({
+    region: 'us-east-2',
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_KEY,
+    signatureVersion: 'v4'
+  })
 
   // start the server
   server.listen(process.env.PORT, '0.0.0.0', (err) => {
