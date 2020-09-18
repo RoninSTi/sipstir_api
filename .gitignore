@@ -2,5 +2,6 @@
 node_modules
 
 #secrets
-dev/appSettings.json
-staging/appSettings.json
+config/appSettings.dev.json
+config/appSettings.prod.json
+config/appSettings.staging.json
