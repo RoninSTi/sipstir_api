@@ -1,7 +1,7 @@
 push-container-staging:
 	heroku container:push web --app sipstir-api-staging --recursive
 
-push-container-production:
+push-container-prod:
 	heroku container:push web --app sipstir-api-prod --recursive
 
 release-container-staging:

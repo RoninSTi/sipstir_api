@@ -64,10 +64,16 @@ const createServer = (options) => {
         return;
       }
 
-      if (origin === 'https://staging.sipstir.app') {
+      if (origin === 'https://staging-business.sipstir.app') {
         cb(null, true);
         return;
       }
+
+      if (origin === 'https://business.sipstir.app') {
+        cb(null, true);
+        return;
+      }
+
       cb(new Error('Not allowed'), false);
     },
   });
