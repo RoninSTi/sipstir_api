@@ -63,6 +63,23 @@ const validateGetAccountRewards = {
   }
 }
 
+const validateGetRedemptions = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        userId: { type: 'number' },
+      },
+      required: ['userId']
+    }
+  }
+}
+
 const validateGetRewards = {
   preValidation: [
     async function (request) {
@@ -206,6 +223,7 @@ const validatePutReward = {
 module.exports = {
   validateDeleteReward,
   validateGetAccountRewards,
+  validateGetRedemptions,
   validateGetRewards,
   validatePostReward,
   validatePostRewardRedeem,

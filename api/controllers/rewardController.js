@@ -140,6 +140,28 @@ async function getRewards(req, res) {
   }
 }
 
+async function getRedemptions(req, res) {
+  const { userId } = req.params
+
+  try {
+    const rewardRedemptions = await RewardRedemption.findAll({
+      include: [{ all: true, nested: true }],
+      order: [
+        ['createdAt', 'DESC'],
+      ],
+      where: {
+        userId,
+      }
+    })
+
+    const response = rewardRedemptions.map(redemption => redemption.toJSON())
+
+    res.send(response)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
 const postReward = async (req, res) => {
   const { accountId, ...rewardData } = req.body
 
@@ -213,6 +235,7 @@ const putReward = async (req, res) => {
 module.exports = {
   deleteReward,
   getAccountRewards,
+  getRedemptions,
   getRewards,
   postReward,
   postRewardRedeem,
