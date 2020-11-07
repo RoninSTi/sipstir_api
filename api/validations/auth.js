@@ -1,5 +1,17 @@
 const { User } = require('../db/db')
 
+const validatePostAuthApple = {
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        identityToken: { type: 'string' }
+      },
+      required: ['identityToken']
+    }
+  }
+}
+
 const validatePostAuthFacebook = {
   schema: {
     body: {
@@ -71,6 +83,7 @@ const validatePostRegister = {
 }
 
 module.exports = {
+  validatePostAuthApple,
   validatePostAuthFacebook,
   validatePostLogin,
   validatePostRegister

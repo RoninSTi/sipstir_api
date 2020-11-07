@@ -29,6 +29,30 @@ async function getAuthSwoopCallback(req, res) {
   }
 }
 
+async function postAuthApple(req, res) {
+  const { identityToken } = req.body
+
+  try {
+    const userData = jwtDecode(identityToken)
+
+    const { email } = userData;
+
+    const user = await User.findOrCreateByEmail({ client: this.client, email, redis: this.redis })
+
+    const { id: userId, roles } = user
+
+    const accessToken = this.jwt.sign({ email, id: userId, roles }, {
+      expiresIn: 864000
+    });
+
+    const userResponse = await User.getSingle({ client: this.client, id: userId, redis: this.redis });
+
+    res.send({ accessToken, user: userResponse })
+  } catch (error) {
+    res.send(error)
+  }
+}
+
 async function postAuthFacebook(req, res) {
   const { fbToken } = req.body
 
@@ -107,6 +131,7 @@ async function postRegister(req, res) {
 
 module.exports = {
   getAuthSwoopCallback,
+  postAuthApple,
   postAuthFacebook,
   postLogin,
   postRegister
