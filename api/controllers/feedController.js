@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { Comment, Guess, Location, Post, sequelize } = require('../db/db');
+const { BlockedUser, Comment, Guess, Location, Post, ReportedPost, sequelize, User } = require('../db/db');
 const Op = Sequelize.Op;
 
 
@@ -95,6 +95,39 @@ async function getFeed(req, res) {
         ...query,
         where: {
           locationId: [locationIds]
+        }
+      }
+    }
+
+    const blockedUsers = await BlockedUser.blockedUserIds({ userId })
+
+    const reportedPosts = await ReportedPost.reportedPostIds({ userId })
+
+    query = {
+      ...query,
+      where: {
+        ...query.where,
+        [Op.not]: {
+          createdById: blockedUsers.length > 0 ? blockedUsers : null,
+        },
+        [Op.not]: {
+          id: reportedPosts.length > 0 ? reportedPosts : null
+        },
+      }
+    }
+
+    const user = await User.findByPk(userId)
+
+    const { hideReported } = user.settings
+
+    if (hideReported) {
+      query = {
+        ...query,
+        where: {
+          ...query.where,
+          [Op.not]: {
+            reported: true
+          }
         }
       }
     }

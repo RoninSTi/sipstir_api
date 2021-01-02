@@ -15,6 +15,10 @@ class Post extends Model {
         type: DataTypes.BOOLEAN,
         defaultValue: false
       },
+      reported: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
       revealed: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

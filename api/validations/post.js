@@ -86,6 +86,11 @@ const validatePostGuess = {
 }
 
 const validatePostPost = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
   schema: {
     body: {
       type: 'object',
@@ -100,10 +105,28 @@ const validatePostPost = {
   }
 }
 
+const validatePostReport = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        postId: { type: 'number' },
+      },
+      required: ['postId']
+    }
+  }
+}
+
 module.exports = {
   validateGetPost,
   validateGetPostCheers,
   validatePostCheers,
   validatePostGuess,
-  validatePostPost
+  validatePostPost,
+  validatePostReport
 };

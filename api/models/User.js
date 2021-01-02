@@ -45,6 +45,18 @@ class User extends Model {
           return () => this.getDataValue('salt')
         }
       },
+      settings: {
+        type: DataTypes.TEXT,
+        defaultValue: JSON.stringify({
+          hideReported: false
+        }),
+        get: function () {
+          return JSON.parse(this.getDataValue('settings'));
+        },
+        set: function (value) {
+          this.setDataValue('settings', JSON.stringify(value));
+        },
+      },
       username: DataTypes.STRING(126).BINARY,
     }, {
       hooks: {

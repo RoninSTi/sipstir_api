@@ -1,4 +1,13 @@
-const { Cheer, Comment, Guess, Location, Post, Reward, User } = require('../db/db');
+const {
+  Cheer,
+  Comment,
+  Guess,
+  Location,
+  Post,
+  ReportedPost,
+  Reward,
+  User
+} = require('../db/db');
 
 const getPost = async (req, res) => {
   const { postId } = req.params;
@@ -265,10 +274,37 @@ async function postPost(req, res) {
   }
 };
 
+async function postReportPost(req, res) {
+  const { postId } = req.params
+  const { id } = req.user
+
+  try {
+    await ReportedPost.findOrCreate({
+      where: {
+        postId,
+        userId: id
+      }
+    });
+
+    await Post.update({
+      reported: true
+    }, {
+      where: {
+        id: postId
+      }
+    });
+
+    res.send('OK');
+  } catch (err) {
+    res.send(err);
+  }
+}
+
 module.exports = {
   getPost,
   getPostCheers,
   postCheers,
   postGuess,
-  postPost
+  postPost,
+  postReportPost
 };
