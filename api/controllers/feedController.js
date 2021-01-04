@@ -118,7 +118,7 @@ async function getFeed(req, res) {
 
     const user = await User.findByPk(userId)
 
-    const hideReported = user.settings?.hideReported
+    const hideReported = user.settings && user.settings.hideReported
 
     if (hideReported) {
       query = {
