@@ -17,9 +17,7 @@ async function getAuthSwoopCallback(req, res) {
 
     const { id, roles } = user
 
-    const accessToken = this.jwt.sign({ email, id, roles, accounts: accountTokenData }, {
-      expiresIn: 864000
-    });
+    const accessToken = this.jwt.sign({ email, id, roles, accounts: accountTokenData });
 
     const userResponse = await User.getSingle({ client: this.client, id, redis: this.redis });
 
@@ -41,9 +39,7 @@ async function postAuthApple(req, res) {
 
     const { id: userId, roles } = user
 
-    const accessToken = this.jwt.sign({ email, id: userId, roles }, {
-      expiresIn: 864000
-    });
+    const accessToken = this.jwt.sign({ email, id: userId, roles });
 
     const userResponse = await User.getSingle({ client: this.client, id: userId, redis: this.redis });
 
@@ -73,9 +69,7 @@ async function postAuthFacebook(req, res) {
 
     const { id: userId, roles } = user
 
-    const accessToken = this.jwt.sign({ email, id: userId, roles }, {
-      expiresIn: 864000
-    });
+    const accessToken = this.jwt.sign({ email, id: userId, roles });
 
     const userResponse = await User.getSingle({ client: this.client, id: userId, redis: this.redis });
 
@@ -97,9 +91,7 @@ async function postLogin(req, res) {
 
     const { id, roles } = user;
 
-    const accessToken = this.jwt.sign({ email, id, roles }, {
-      expiresIn: 864000
-    });
+    const accessToken = this.jwt.sign({ email, id, roles });
 
     const userResponse = await User.getSingle({ client: this.client, id, redis: this.redis });
 
@@ -115,13 +107,11 @@ async function postRegister(req, res) {
   try {
     const user = await User.findOrCreateByEmail({ client: this.client, email, redis: this.redis, password })
 
-    const { roles } = user
+    const { id, roles } = user
 
-    const accessToken = this.jwt.sign({ email, roles }, {
-      expiresIn: 864000
-    });
+    const accessToken = this.jwt.sign({ email, id, roles });
 
-    const userResponse = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+    const userResponse = await User.getSingle({ client: this.client, id, redis: this.redis });
 
     res.send({ accessToken, user: userResponse })
   } catch (error) {

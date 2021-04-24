@@ -59,16 +59,17 @@ async function getRewards(req, res) {
         ],
         where: {
           accountId: [accountIds],
+          isActive: true
         }
       })
 
       if (!rewards) {
         res.send([])
+      } else {
+        const response = rewards.map(reward => reward.toJSON())
+
+        res.send(response)
       }
-
-      const response = rewards.map(reward => reward.toJSON())
-
-      res.send(response)
     } else if (lat && lng) {
       const attributes = ['id'];
 
@@ -91,10 +92,6 @@ async function getRewards(req, res) {
         }
       })
 
-      if (!accounts) {
-        res.send([])
-      }
-
       const accountIds = accounts.map(account => account.id)
 
       const rewards = await Reward.findAll({
@@ -109,11 +106,11 @@ async function getRewards(req, res) {
 
       if (!rewards) {
         res.send([])
+      } else {
+        const response = rewards.map(reward => reward.toJSON())
+
+        res.send(response)
       }
-
-      const response = rewards.map(reward => reward.toJSON())
-
-      res.send(response)
     } else {
       const rewards = await Reward.findAll({
         include: [{ all: true, nested: true }],
@@ -129,11 +126,11 @@ async function getRewards(req, res) {
 
       if (!rewards) {
         res.send([])
+      } else {
+        const response = rewards.map(reward => reward.toJSON())
+
+        res.send(response)
       }
-
-      const response = rewards.map(reward => reward.toJSON())
-
-      res.send(response)
     }
   } catch (error) {
     res.send(error)

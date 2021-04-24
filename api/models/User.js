@@ -158,7 +158,7 @@ class User extends Model {
 
     const streamFollowers = followerResponse.results;
 
-    const followerIds = streamFollowers.map(obj => parseUserId(obj.target_id)).filter(followerId => followerId !== id);
+    const followerIds = streamFollowers.map(({ feed_id }) => parseUserId(feed_id)).filter(followerId => followerId !== id);
 
     const followerUsers = await this.findAll({ where: { id: followerIds } });
 

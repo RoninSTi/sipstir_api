@@ -19,3 +19,6 @@ logs-prod:
 staging: push-container-staging release-container-staging
 
 prod: push-container-prod release-container-prod
+
+up:
+	docker-compose build; docker-compose up
