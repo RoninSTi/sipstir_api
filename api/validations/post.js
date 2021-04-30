@@ -1,3 +1,36 @@
+const { Post } = require('../db/db')
+
+const validateDeletePost = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify()
+    }
+  ],
+  preHandler: [
+    async function (req) {
+      const { id } = req.user
+      const { postId } = req.params
+
+      const post = await Post.findByPk(postId);
+
+      const userIsCreator = post.createdById === id
+
+      if (!userIsCreator) {
+        throw new Error('Not creator of post')
+      }
+    }
+  ],
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        postId: { type: 'number' }
+      },
+      required: ['postId']
+    },
+  }
+};
+
 const validateGetPost = {
   preValidation: [
     async function (request) {
@@ -123,6 +156,7 @@ const validatePostReport = {
 }
 
 module.exports = {
+  validateDeletePost,
   validateGetPost,
   validateGetPostCheers,
   validatePostCheers,

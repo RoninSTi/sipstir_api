@@ -9,6 +9,22 @@ const {
   User
 } = require('../db/db');
 
+async function deletePost(req, res) {
+  const { postId } = req.params;
+
+  try {
+    await Post.destroy({
+      where: {
+        id: postId
+      }
+    });
+
+    res.send('OK');
+  } catch (err) {
+    res.send(err);
+  }
+}
+
 const getPost = async (req, res) => {
   const { postId } = req.params;
   const { userId } = req.query;
@@ -301,6 +317,7 @@ async function postReportPost(req, res) {
 }
 
 module.exports = {
+  deletePost,
   getPost,
   getPostCheers,
   postCheers,
