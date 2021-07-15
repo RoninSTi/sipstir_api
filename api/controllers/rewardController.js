@@ -88,6 +88,7 @@ async function getRewards(req, res) {
 
       const accounts = await Account.findAll({
         where: {
+          isActive: true,
           locationId: locationIds
         }
       })
