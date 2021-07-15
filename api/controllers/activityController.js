@@ -19,7 +19,6 @@ async function getAccountActivity(req, res) {
 
     activityObjects.forEach(({ activities }) => {
       activities.forEach(activity => {
-        console.log({ activity })
         const activityResponse = {
           createdAt: activity.time,
           createdById: parseInt(activity.actor),

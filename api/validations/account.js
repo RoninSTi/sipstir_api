@@ -1,4 +1,4 @@
-const { Account } = require('../db/db')
+const { Account, Location } = require('../db/db')
 
 const validateDeleteAccount = {
   preValidation: [
@@ -166,19 +166,28 @@ const validateGetSubscription = {
 }
 
 const validatePostAccount = {
-  preValidation: [
-    async function (request) {
-      return await request.jwtVerify()
-    }
-  ],
   preHandler: [
     async function (req) {
-      const { roles } = req.user
+      const { placeId } = req.body;
 
-      const isEmployee = roles.some(role => role === 'employee')
+      const location = await Location.findOne({
+        where: {
+          placeId
+        }
+      })
 
-      if (!isEmployee) throw new Error('Unauthorized.')
-    }
+      if (location) {
+        const account = await Account.findOne({
+          where: {
+            locationId: location.id
+          }
+        })
+
+        if (account) {
+          throw new Error('Account with that location already exists');
+        }
+      }
+    },
   ],
   schema: {
     body: {

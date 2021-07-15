@@ -1,7 +1,6 @@
 const { BlockedUser } = require('../db/db');
 
 async function getBlockedUsers(req, res) {
-  console.log({ user: req.user })
   const { id: userId } = req.user;
 
   try {

@@ -88,7 +88,7 @@ async function getRewards(req, res) {
 
       const accounts = await Account.findAll({
         where: {
-          locationId: [locationIds]
+          locationId: locationIds
         }
       })
 
@@ -99,7 +99,7 @@ async function getRewards(req, res) {
         limit,
         offset,
         where: {
-          accountId: [accountIds],
+          accountId: accountIds,
           isActive: true,
         }
       })
