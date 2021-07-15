@@ -10,6 +10,8 @@ const stream = require('getstream');
 
 const bsCheckPermissions = require('./api/plugins/check-permissions');
 
+const mailgun = require("mailgun-js");
+
 const { Points } = require('./api/db/db');
 
 const createRequestId = () => uuidv4();
@@ -101,6 +103,10 @@ const createServer = (options) => {
     secretAccessKey: AWS_SECRET_KEY,
     signatureVersion: 'v4'
   })
+
+  const mg = mailgun({apiKey: nconf.get('keys.mailgun.key'), domain: nconf.get('keys.mailgun.domain')});
+
+  server.decorate('mg', mg);
 
   // start the server
   server.listen(process.env.PORT, '0.0.0.0', (err) => {
