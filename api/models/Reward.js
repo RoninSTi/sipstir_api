@@ -112,6 +112,21 @@ class Reward extends Model {
 
     return rewardResponse
   }
+
+  async getResponse() {
+    const { RewardRedemption } = this.sequelize.models;
+
+    const redemptionCount = await RewardRedemption.count({
+      where: {
+        rewardId: this.id
+      }
+    })
+
+    return {
+      ...this.toJSON(),
+      redemptionCount
+    }
+  }
 }
 
 module.exports = {

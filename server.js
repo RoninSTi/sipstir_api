@@ -104,7 +104,10 @@ const createServer = (options) => {
     signatureVersion: 'v4'
   })
 
-  const mg = mailgun({apiKey: nconf.get('keys.mailgun.key'), domain: nconf.get('keys.mailgun.domain')});
+  const mg = mailgun({
+    apiKey: nconf.get('keys.mailgun.key'),
+    domain: nconf.get('keys.mailgun.domain')
+  });
 
   server.decorate('mg', mg);
 

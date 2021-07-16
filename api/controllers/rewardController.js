@@ -28,7 +28,9 @@ const getAccountRewards = async (req, res) => {
       }
     });
 
-    const response = rewards.map(reward => reward.toJSON());
+    const responsePromises = rewards.map(reward => reward.getResponse());
+
+    const response = await Promise.all(responsePromises)
 
     res.send(response)
   } catch (error) {
@@ -199,6 +201,27 @@ async function postRewardRedeem(req, res) {
     await user.redeemReward({ reward })
 
     const response = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+
+    const account = await Account.findByPk(reward.accountId)
+
+    const users = await account.getUsers()
+
+    const emails = users.map(user => user.email)
+
+    let emailString = ''
+
+    emails.forEach((email, index) => {
+      emailString = `${emailString}${email}${index < emails.length - 1 ? ',' : ''}`
+    })
+
+    const data = {
+      from: 'Sipstir Business <no-reply@sipstir.app>',
+      to: emailString,
+      subject: 'Sipstir reward redemption',
+      text: `User ${user.username} redeemed reward: ${reward.title}`
+    };
+
+    const mgResponse = await this.mg.messages().send(data)
 
     res.send(response)
   } catch (error) {
