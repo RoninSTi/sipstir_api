@@ -1,60 +1,75 @@
-const { User } = require('../db/db')
+const { User } = require("../db/db");
 
 const validatePostAuthApple = {
   schema: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        identityToken: { type: 'string' }
+        identityToken: { type: "string" },
       },
-      required: ['identityToken']
-    }
-  }
-}
+      required: ["identityToken"],
+    },
+  },
+};
 
 const validatePostAuthFacebook = {
   schema: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        fbToken: { type: 'string' }
+        fbToken: { type: "string" },
       },
-      required: ['fbToken']
-    }
-  }
-}
+      required: ["fbToken"],
+    },
+  },
+};
 
 const validatePostLogin = {
   preHandler: [
-    async function(req) {
+    async function (req) {
       const { email, password } = req.body;
 
       const user = await User.findOne({
         where: {
-          email
-        }
-      })
+          email,
+        },
+      });
 
       if (!user) {
-        throw new Error('Unauthorized.')
+        throw new Error("Unauthorized.");
       }
 
-      const isCorrect = user.correctPassword(password)
+      const isCorrect = user.correctPassword(password);
 
       if (!isCorrect) {
-        throw new Error('Unauthorized.');
+        throw new Error("Unauthorized.");
       }
-    }
+    },
   ],
   body: {
-    type: 'object',
+    type: "object",
     properties: {
-      email: { type: 'string', format: 'email' },
-      password: { type: 'string', format: 'email' }
+      email: { type: "string", format: "email" },
+      password: { type: "string", format: "email" },
     },
-    required: ['email', 'password']
-  }
-}
+    required: ["email", "password"],
+  },
+};
+
+const validatePostPasswordReset = {
+  body: {
+    type: "object",
+    properties: {
+      otp: {
+        type: "string",
+      },
+      password: {
+        type: "string",
+      },
+    },
+    required: ["otp", "password"],
+  },
+};
 
 const validatePostRegister = {
   preHandler: [
@@ -63,28 +78,29 @@ const validatePostRegister = {
 
       const user = await User.findOne({
         where: {
-          email
-        }
-      })
+          email,
+        },
+      });
 
       if (user) {
-        throw new Error('Unauthorized.')
+        throw new Error("Unauthorized.");
       }
-    }
+    },
   ],
   body: {
-    type: 'object',
+    type: "object",
     properties: {
-      email: { type: 'string', format: 'email' },
-      password: { type: 'string', format: 'email' }
+      email: { type: "string", format: "email" },
+      password: { type: "string" },
     },
-    required: ['email', 'password']
-  }
-}
+    required: ["email", "password"],
+  },
+};
 
 module.exports = {
   validatePostAuthApple,
   validatePostAuthFacebook,
   validatePostLogin,
-  validatePostRegister
-}
+  validatePostPasswordReset,
+  validatePostRegister,
+};

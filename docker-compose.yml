@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   mysql:
     image: mysql:5.7.30
@@ -19,12 +19,14 @@ services:
       - "6379"
     volumes:
       - redis:/var/lib/redis
-  sipstir-api:
+  api:
     build:
       context: .
       dockerfile: Dockerfile.dev
     environment:
       - NODE_ENV=development
+    volumes:
+      - ./:/usr/src/app
     ports:
       - 8080:8080
     links:
