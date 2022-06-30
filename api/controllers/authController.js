@@ -1,50 +1,8 @@
 const jwtDecode = require("jwt-decode");
 const { User } = require("../db/db");
+const nconf = require("nconf");
 
 const { getMe, getUser } = require("../adaptors/facebookAdaptor");
-
-async function getAuthSwoopCallback(req, res) {
-  try {
-    const { id_token } =
-      await this.swoop.getAccessTokenFromAuthorizationCodeFlow(req);
-
-    const { email } = jwtDecode(id_token);
-
-    const user = await User.findOrCreateByEmail({
-      client: this.client,
-      email,
-      redis: this.redis,
-    });
-
-    const accounts = await user.getAccounts({
-      include: [{ all: true, nested: true }],
-    });
-
-    const accountTokenData = accounts.map((account) => ({
-      accountId: account.id,
-      role: account.AccountUser.role,
-    }));
-
-    const { id, roles } = user;
-
-    const accessToken = this.jwt.sign({
-      email,
-      id,
-      roles,
-      accounts: accountTokenData,
-    });
-
-    const userResponse = await User.getSingle({
-      client: this.client,
-      id,
-      redis: this.redis,
-    });
-
-    res.send({ accessToken, user: userResponse });
-  } catch (error) {
-    res.send(error);
-  }
-}
 
 async function postAuthApple(req, res) {
   const { identityToken } = req.body;
@@ -127,18 +85,80 @@ async function postLogin(req, res) {
 
     const { id, roles } = user;
 
-    const accessToken = this.jwt.sign({ email, id, roles });
+    const accessToken = this.jwt.sign(
+      { email, id, roles },
+      {
+        expiresIn: nconf.get("cookies.accessExpiration"),
+      }
+    );
 
-    const userResponse = await User.getSingle({
-      client: this.client,
-      id,
-      redis: this.redis,
-    });
+    const refreshToken = this.jwt.sign(
+      {
+        id,
+      },
+      {
+        expiresIn: nconf.get("cookies.refreshExpiration"),
+      }
+    );
 
-    res.send({ accessToken, user: userResponse });
+    res
+      .setCookie("access_token", accessToken, {
+        domain: nconf.get("cookies.host"),
+        path: "/",
+        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        httpOnly: true,
+        sameSite: true, // alternative CSRF protection
+      })
+      .setCookie("refresh_token", refreshToken, {
+        domain: nconf.get("cookies.host"),
+        path: "/",
+        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        httpOnly: true,
+        sameSite: true, // alternative CSRF protection
+      })
+      .setCookie("logged_in", true, {
+        domain: nconf.get("cookies.host"),
+        path: "/",
+        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        httpOnly: false,
+        sameSite: true,
+      })
+      .code(200)
+      .send({
+        accessToken,
+      });
   } catch (error) {
     res.send(error);
   }
+}
+
+async function postLogout(req, res) {
+  res
+    .setCookie("access_token", "", {
+      domain: nconf.get("cookies.host"),
+      path: "/",
+      secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+      httpOnly: true,
+      sameSite: true, // alternative CSRF protection
+      maxAge: -1,
+    })
+    .setCookie("refresh_token", "", {
+      domain: nconf.get("cookies.host"),
+      path: "/",
+      secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+      httpOnly: true,
+      sameSite: true, // alternative CSRF protection
+      maxAge: -1,
+    })
+    .setCookie("logged_in", "", {
+      domain: nconf.get("cookies.host"),
+      path: "/",
+      secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+      httpOnly: false,
+      sameSite: true,
+      maxAge: -1,
+    })
+    .code(200);
 }
 
 async function postPasswordReset(req, res) {
@@ -173,6 +193,69 @@ async function postPasswordReset(req, res) {
   }
 }
 
+async function postRefresh(req, res) {
+  const { access_token, refresh_token } = req.cookies;
+
+  const { id: refresh_id } = this.jwt.decode(refresh_token);
+
+  const { id: access_id } = this.jwt.decode(access_token);
+
+  try {
+    if (access_id !== refresh_id) {
+      throw new Error("token id mismatch");
+    }
+
+    const user = await User.findByPk(access_id);
+
+    const { email, id, roles } = user;
+
+    const accessToken = this.jwt.sign(
+      { email, id, roles },
+      {
+        expiresIn: nconf.get("cookies.accessExpiration"),
+      }
+    );
+
+    const refreshToken = this.jwt.sign(
+      {
+        id,
+      },
+      {
+        expiresIn: nconf.get("cookies.refreshExpiration"),
+      }
+    );
+
+    res
+      .setCookie("access_token", accessToken, {
+        domain: nconf.get("cookies.host"),
+        path: "/",
+        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        httpOnly: true,
+        sameSite: true, // alternative CSRF protection
+      })
+      .setCookie("refresh_token", refreshToken, {
+        domain: nconf.get("cookies.host"),
+        path: "/",
+        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        httpOnly: true,
+        sameSite: true, // alternative CSRF protection
+      })
+      .setCookie("logged_in", true, {
+        domain: nconf.get("cookies.host"),
+        path: "/",
+        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        httpOnly: false,
+        sameSite: true,
+      })
+      .code(200)
+      .send({
+        accessToken,
+      });
+  } catch (err) {
+    res.send(err);
+  }
+}
+
 async function postRegister(req, res) {
   const { email, password } = req.body;
 
@@ -201,10 +284,11 @@ async function postRegister(req, res) {
 }
 
 module.exports = {
-  getAuthSwoopCallback,
   postAuthApple,
   postAuthFacebook,
   postLogin,
+  postLogout,
   postPasswordReset,
+  postRefresh,
   postRegister,
 };

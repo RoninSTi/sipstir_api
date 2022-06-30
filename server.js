@@ -1,14 +1,12 @@
 const Fastify = require("fastify");
 const AutoLoad = require("fastify-autoload");
 
-const jwt = require("fastify-jwt");
-const oauthPlugin = require("fastify-oauth2");
+const jwt = require("@fastify/jwt");
+const cookie = require("@fastify/cookie");
 const nconf = require("nconf");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const stream = require("getstream");
-
-const bsCheckPermissions = require("./api/plugins/check-permissions");
 
 const mailgun = require("mailgun-js");
 
@@ -33,49 +31,38 @@ const createServer = (options) => {
       Points.buildInitialLeaderboard({ redis: server.redis });
     });
 
-  server.register(require("fastify-auth"));
-
-  server.register(oauthPlugin, {
-    name: "swoop",
-    scope: "email",
-    credentials: {
-      client: {
-        id: nconf.get("keys.swoop.clientId"),
-        secret: nconf.get("keys.swoop.secret"),
-      },
-      auth: {
-        authorizeHost: "https://auth.swoop.email",
-        authorizePath: "/oauth2/authorize",
-        tokenHost: "https://auth.swoop.email",
-        tokenPath: "/oauth2/token",
-      },
+  server.register(jwt, {
+    secret: nconf.get("jwt.secret"),
+    cookie: {
+      cookieName: "access_token",
+      signed: false,
     },
-    startRedirectPath: "/auth/swoop",
-    callbackUri: `${nconf.get("app.authCallbackHost")}/login`,
   });
 
-  server.register(jwt, { secret: nconf.get("jwt.secret") });
+  server.register(cookie);
 
-  server.register(bsCheckPermissions);
-
-  server.register(require("fastify-cors"), {
+  server.register(require("@fastify/cors"), {
+    credentials: true,
     origin: (origin, cb) => {
-      if (/localhost/.test(origin) || origin === undefined) {
+      server.log.info(origin);
+      const hostname = new URL(origin).hostname;
+
+      if (hostname === "localhost") {
         //  Request from localhost will pass
         cb(null, true);
         return;
       }
 
-      if (origin === "https://staging-business.sipstir.app") {
+      if (hostname === "staging-business.sipstir.app") {
         cb(null, true);
         return;
       }
 
-      if (origin === "https://business.sipstir.app") {
+      if (hostname === "business.sipstir.app") {
         cb(null, true);
         return;
       }
-
+      // Generate an error on other origins, disabling access
       cb(new Error("Not allowed"), false);
     },
   });
@@ -117,15 +104,21 @@ const createServer = (options) => {
   server.decorate("mg", mg);
 
   // start the server
-  server.listen(process.env.PORT, "0.0.0.0", (err) => {
-    if (err) {
-      server.log.error(err);
-      console.log(err);
-      process.exit(1);
-    }
+  server.listen(
+    {
+      port: process.env.PORT,
+      host: "0.0.0.0",
+    },
+    (err) => {
+      if (err) {
+        server.log.error(err);
+        console.log(err);
+        process.exit(1);
+      }
 
-    server.log.info("Server Started");
-  });
+      server.log.info("Server Started");
+    }
+  );
 };
 
 module.exports = {

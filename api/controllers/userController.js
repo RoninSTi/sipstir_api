@@ -1,4 +1,4 @@
-const { Account, User } = require('../db/db');
+const { Account, User } = require("../db/db");
 
 const getCheckUsername = async (req, res) => {
   const { username } = req.params;
@@ -6,15 +6,39 @@ const getCheckUsername = async (req, res) => {
   try {
     const existingUser = await User.findOne({
       where: {
-        username
-      }
-    })
+        username,
+      },
+    });
 
-    const usernameTaken = !!existingUser
+    const usernameTaken = !!existingUser;
 
-    res.send({ isAvailable: !usernameTaken })
+    res.send({ isAvailable: !usernameTaken });
   } catch (error) {
-    res.send(error)
+    res.send(error);
+  }
+};
+
+async function getMe(req, res) {
+  const { id } = req.user;
+
+  try {
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      res.send(null);
+
+      return;
+    }
+
+    const response = await User.getSingle({
+      client: this.client,
+      id,
+      redis: this.redis,
+    });
+
+    res.send(response);
+  } catch (error) {
+    res.send(error);
   }
 }
 
@@ -30,11 +54,15 @@ async function getUser(req, res) {
       return;
     }
 
-    const response = await User.getSingle({ client: this.client, id, redis: this.redis });
+    const response = await User.getSingle({
+      client: this.client,
+      id,
+      redis: this.redis,
+    });
 
     res.send(response);
   } catch (error) {
-    res.send(error)
+    res.send(error);
   }
 }
 
@@ -44,11 +72,13 @@ const getUserAccounts = async (req, res) => {
   try {
     const user = await User.findByPk(id);
 
-    const accounts = await user.getAccounts({ include: [{ all: true, nested: true }] });
+    const accounts = await user.getAccounts({
+      include: [{ all: true, nested: true }],
+    });
 
     res.send(accounts);
   } catch (error) {
-    res.send(error)
+    res.send(error);
   }
 };
 
@@ -64,11 +94,15 @@ async function getUserEmail(req, res) {
       return;
     }
 
-    const response = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+    const response = await User.getSingle({
+      client: this.client,
+      id: user.id,
+      redis: this.redis,
+    });
 
     res.send(response);
   } catch (error) {
-    res.send(error)
+    res.send(error);
   }
 }
 
@@ -88,79 +122,100 @@ async function postUser(req, res) {
 
     await this.client.user(`${user.id}`).getOrCreate();
 
-    const response = await User.getSingle({ client: this.client, id: user.id, redis: this.redis });
+    const response = await User.getSingle({
+      client: this.client,
+      id: user.id,
+      redis: this.redis,
+    });
 
     res.send(response);
   } catch (error) {
     res.send(error);
   }
-};
+}
 
 async function postUserFollow(req, res) {
   const { followingId } = req.params;
   const { userId } = req.body;
 
   try {
-    const timelineFeed = await this.client.feed('timeline', `${userId}`);
+    const timelineFeed = await this.client.feed("timeline", `${userId}`);
 
-    followingResponse = await timelineFeed.following({ offset: 0, limit: 1, filter: [`user:${followingId}`] });
+    followingResponse = await timelineFeed.following({
+      offset: 0,
+      limit: 1,
+      filter: [`user:${followingId}`],
+    });
 
     const isFollowing = followingResponse.results.length > 0;
 
-    const followingUser = await User.findByPk(followingId)
+    const followingUser = await User.findByPk(followingId);
 
     if (isFollowing) {
-      await timelineFeed.unfollow('user', `${followingId}`);
+      await timelineFeed.unfollow("user", `${followingId}`);
 
       const unfollowActivity = {
         actor: `${userId}`,
-        verb: 'unfollow',
+        verb: "unfollow",
         object: `user:${followingId}`,
         time: new Date(),
-        message: `You unfollowed ${followingUser.username}`
-      }
+        message: `You unfollowed ${followingUser.username}`,
+      };
 
-      const creatorNotificationFeed = this.client.feed('notification', `${userId}`);
+      const creatorNotificationFeed = this.client.feed(
+        "notification",
+        `${userId}`
+      );
 
       await creatorNotificationFeed.addActivity(unfollowActivity);
     } else {
-      const user = await User.findByPk(userId)
+      const user = await User.findByPk(userId);
 
-      await timelineFeed.follow('user', `${followingId}`);
+      await timelineFeed.follow("user", `${followingId}`);
 
       const followActivity = {
         actor: `${userId}`,
-        verb: 'follow',
+        verb: "follow",
         object: `user:${followingId}`,
         time: new Date(),
-      }
+      };
 
-      const objectMessage = `${user.username} followed you`
+      const objectMessage = `${user.username} followed you`;
 
       const objectFollowActivity = {
         ...followActivity,
         foreign_id: `${followingId}`,
-        message: objectMessage
-      }
+        message: objectMessage,
+      };
 
-      const notificationFeed = this.client.feed('notification', `${followingId}`);
+      const notificationFeed = this.client.feed(
+        "notification",
+        `${followingId}`
+      );
 
       await notificationFeed.addActivity(objectFollowActivity);
 
-      await followingUser.sendPush({ body: objectMessage, data: { userId }})
+      await followingUser.sendPush({ body: objectMessage, data: { userId } });
 
       const actorFollowActivity = {
         ...followActivity,
         foreign_id: `${userId}`,
-        message: `You followed ${followingUser.username}`
-      }
+        message: `You followed ${followingUser.username}`,
+      };
 
-      const creatorNotificationFeed = this.client.feed('notification', `${userId}`);
+      const creatorNotificationFeed = this.client.feed(
+        "notification",
+        `${userId}`
+      );
 
       await creatorNotificationFeed.addActivity(actorFollowActivity);
     }
 
-    const response = await User.getSingle({ client: this.client, id: userId, redis: this.redis });
+    const response = await User.getSingle({
+      client: this.client,
+      id: userId,
+      redis: this.redis,
+    });
 
     res.send(response);
   } catch (error) {
@@ -175,24 +230,25 @@ const putUser = async (req, res) => {
   try {
     const user = await User.findByPk(userId);
 
-    Object.keys(userData).forEach(key => {
-      user[key] = userData[key]
+    Object.keys(userData).forEach((key) => {
+      user[key] = userData[key];
     });
 
-    await user.save()
+    await user.save();
 
-    res.send(user.toJSON())
+    res.send(user.toJSON());
   } catch (error) {
     res.send(error);
   }
-}
+};
 
 module.exports = {
   getCheckUsername,
+  getMe,
   getUser,
   getUserAccounts,
   getUserEmail,
   postUser,
   postUserFollow,
-  putUser
+  putUser,
 };

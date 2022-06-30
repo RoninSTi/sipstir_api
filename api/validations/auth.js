@@ -56,6 +56,14 @@ const validatePostLogin = {
   },
 };
 
+const validatePostLogout = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify();
+    },
+  ],
+};
+
 const validatePostPasswordReset = {
   body: {
     type: "object",
@@ -101,6 +109,7 @@ module.exports = {
   validatePostAuthApple,
   validatePostAuthFacebook,
   validatePostLogin,
+  validatePostLogout,
   validatePostPasswordReset,
   validatePostRegister,
 };

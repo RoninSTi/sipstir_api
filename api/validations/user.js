@@ -1,46 +1,53 @@
-const { Account } = require('../models/Account');
-const { User } = require('../models/User');
+const { Account } = require("../models/Account");
+const { User } = require("../models/User");
 
 const validateGetCheckUsername = {
   preValidation: [
     async function (request) {
-      return await request.jwtVerify()
-    }
+      return await request.jwtVerify();
+    },
   ],
   schema: {
     params: {
-      type: 'object',
+      type: "object",
       properties: {
-        username: { type: 'string'}
+        username: { type: "string" },
       },
-      required: ['username']
-    }
-  }
-}
+      required: ["username"],
+    },
+  },
+};
+
+const validateGetMe = {
+  preValidation: [
+    async function (request) {
+      return await request.jwtVerify();
+    },
+  ],
+};
 
 const validateGetUser = {
   preValidation: [
     async function (request) {
-      return await request.jwtVerify()
-    }
+      return await request.jwtVerify();
+    },
   ],
   schema: {
     params: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'number' }
-
+        id: { type: "number" },
       },
-      required: ['id']
-    }
-  }
-}
+      required: ["id"],
+    },
+  },
+};
 
 const validateGetUserAccounts = {
   preValidation: [
     async function (request) {
-      return await request.jwtVerify()
-    }
+      return await request.jwtVerify();
+    },
   ],
   preHandler: [
     async function (request) {
@@ -49,37 +56,36 @@ const validateGetUserAccounts = {
       const existingUser = await User.findByPk(id);
 
       if (!existingUser) {
-        throw new Error('Member does not exist.');
+        throw new Error("Member does not exist.");
       }
-    }
+    },
   ],
   schema: {
     params: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'number' }
-      }
-    }
-  }
-}
+        id: { type: "number" },
+      },
+    },
+  },
+};
 
 const validateGetUserEmail = {
   preValidation: [
     async function (request) {
-      return await request.jwtVerify()
-    }
+      return await request.jwtVerify();
+    },
   ],
   schema: {
     params: {
-      type: 'object',
+      type: "object",
       properties: {
-        email: { type: 'string', format: 'email' }
-
+        email: { type: "string", format: "email" },
       },
-      required: ['email']
-    }
-  }
-}
+      required: ["email"],
+    },
+  },
+};
 
 const validatePostUser = {
   preHandler: [
@@ -87,57 +93,57 @@ const validatePostUser = {
       const { accountId, email } = request.body;
 
       if (accountId) {
-        const account = await Account.findByPk(accountId)
+        const account = await Account.findByPk(accountId);
 
         if (!account) {
-          throw new Error('Account does not exist.')
+          throw new Error("Account does not exist.");
         }
 
         if (account.userId) {
-          throw new Error('Account has user.')
+          throw new Error("Account has user.");
         }
       }
 
       const user = await User.findOne({ where: { email } });
 
       if (user) {
-        throw new Error('User exists.');
+        throw new Error("User exists.");
       }
-    }
+    },
   ],
   schema: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        accountId: { type: 'number' },
-        avatar: { type: 'string', format: 'url' },
-        email: { type: 'string', format: 'email' },
-        pushToken: { type: 'string' },
-        username: { type: 'string'}
+        accountId: { type: "number" },
+        avatar: { type: "string", format: "url" },
+        email: { type: "string", format: "email" },
+        pushToken: { type: "string" },
+        username: { type: "string" },
       },
-      required: ['email'],
+      required: ["email"],
     },
   },
-}
+};
 
 const validatePostUserFollow = {
   schema: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        userId: { type: 'number'}
+        userId: { type: "number" },
       },
-      required: ['userId']
+      required: ["userId"],
     },
     params: {
-      type: 'object',
+      type: "object",
       properties: {
-        followingId: { type: 'number' }
+        followingId: { type: "number" },
       },
-      required: ['followingId']
-    }
-  }
-}
+      required: ["followingId"],
+    },
+  },
+};
 
 const validatePutUser = {
   preHandler: [
@@ -147,36 +153,37 @@ const validatePutUser = {
       const user = await User.findByPk(userId);
 
       if (!user) {
-        throw new Error('User does not exist');
+        throw new Error("User does not exist");
       }
-    }
+    },
   ],
   schema: {
     body: {
-      type: 'object',
+      type: "object",
       properties: {
-        avatar: { type: 'string', format: 'url' },
-        email: { type: 'string', format: 'email' },
-        pushToken: { type: 'string' },
-        username: { type: 'string' }
-      }
+        avatar: { type: "string", format: "url" },
+        email: { type: "string", format: "email" },
+        pushToken: { type: "string" },
+        username: { type: "string" },
+      },
     },
     params: {
-      type: 'object',
+      type: "object",
       properties: {
-        userId: { type: 'number' }
+        userId: { type: "number" },
       },
-      required: ['userId']
-    }
-  }
-}
+      required: ["userId"],
+    },
+  },
+};
 
 module.exports = {
   validateGetCheckUsername,
+  validateGetMe,
   validateGetUser,
   validateGetUserAccounts,
   validateGetUserEmail,
   validatePostUser,
   validatePostUserFollow,
-  validatePutUser
-}
+  validatePutUser,
+};
