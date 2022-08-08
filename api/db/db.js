@@ -17,6 +17,20 @@ const { RewardRedemption } = require('../models/RewardRedemption');
 const { Subscription } = require('../models/Subscription');
 const { User } = require('../models/User');
 
+const wkx = require('wkx')
+Sequelize.GEOMETRY.prototype._stringify = function _stringify(value, options) {
+  return `ST_GeomFromText(${options.escape(wkx.Geometry.parseGeoJSON(value).toWkt())})`;
+}
+Sequelize.GEOMETRY.prototype._bindParam = function _bindParam(value, options) {
+  return `ST_GeomFromText(${options.bindParam(wkx.Geometry.parseGeoJSON(value).toWkt())})`;
+}
+Sequelize.GEOGRAPHY.prototype._stringify = function _stringify(value, options) {
+  return `ST_GeomFromText(${options.escape(wkx.Geometry.parseGeoJSON(value).toWkt())})`;
+}
+Sequelize.GEOGRAPHY.prototype._bindParam = function _bindParam(value, options) {
+  return `ST_GeomFromText(${options.bindParam(wkx.Geometry.parseGeoJSON(value).toWkt())})`;
+}
+
 const sequelize = new Sequelize(process.env.JAWSDB_URL, {
   define: {
     charset: 'utf8mb4',

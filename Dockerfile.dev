@@ -15,7 +15,7 @@ ENV APP_SETTINGS_FILE_PATH '/usr/src/app/config/appSettings.dev.json'
 
 ENV PORT 8080
 
-ENV JAWSDB_URL 'mysql://root:@mysql/sipstir'
+ENV JAWSDB_URL 'mysql://root@mysql/sipstir'
 
 ENV REDIS_URL 'redis://redis'
 

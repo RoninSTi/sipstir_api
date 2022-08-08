@@ -40,6 +40,8 @@ class Location extends Model {
 
       const { result: googlePlace } = responseJSON;
 
+      console.log({ googlePlace });
+
       const photos = googlePlace.photos || []
 
       let photo = null
@@ -52,7 +54,11 @@ class Location extends Model {
 
       const { lat, lng } = googlePlace.geometry.location
 
-      const geometry = { type: 'Point', coordinates: [lng, lat]}
+      console.log({ location: googlePlace.geometry.location });
+
+      const geometry = { type: 'Point', coordinates: [lng, lat] }
+
+      console.log({ geometry })
 
       const locationData = {
         name: googlePlace.name,

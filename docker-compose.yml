@@ -1,12 +1,11 @@
 version: "3"
 services:
   mysql:
-    image: mysql:5.7.30
+    image: mysql
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=sipstir
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=password
     ports:
       - 3306:3306
     volumes:

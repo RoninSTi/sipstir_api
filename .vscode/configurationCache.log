@@ -1,0 +1,1 @@
+{"buildTargets":["logs-prod","logs-staging","prod","push-container-prod","push-container-staging","release-container-prod","release-container-staging","staging","up"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}

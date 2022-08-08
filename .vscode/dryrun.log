@@ -1,0 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/craigcronin/Development/sipstir_api'
+heroku container:push web --app sipstir-api-staging --recursive
+make: Leaving directory `/Users/craigcronin/Development/sipstir_api'
+ 
