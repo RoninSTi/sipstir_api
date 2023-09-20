@@ -73,6 +73,35 @@ async function postAuthFacebook(req, res) {
   }
 }
 
+async function postForgot(req, res) {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({
+      where: {
+        email,
+      },
+    });
+
+    await user.setOtp();
+
+    const data = {
+      from: "Sipstir Business <no-reply@sipstir.app>",
+      to: email,
+      subject: "Reset Password for Sipstir Business",
+      text: `Reset your password by following this link: ${nconf.get(
+        "app.authCallbackHost"
+      )}/reset?otp=${user.otp}`,
+    };
+
+    await this.mg.messages().send(data);
+
+    res.code(200).send();
+  } catch (error) {
+    res.send(error);
+  }
+}
+
 async function postLogin(req, res) {
   const { email } = req.body;
 
@@ -83,10 +112,14 @@ async function postLogin(req, res) {
       },
     });
 
-    const { id, roles } = user;
+    const accounts = await user.getAccounts({
+      include: [{ all: true, nested: true }],
+    });
+
+    const { id, roles, username, avatar } = user;
 
     const accessToken = this.jwt.sign(
-      { email, id, roles },
+      { accounts, avatar, email, id, roles, username },
       {
         expiresIn: nconf.get("cookies.accessExpiration"),
       }
@@ -207,10 +240,14 @@ async function postRefresh(req, res) {
 
     const user = await User.findByPk(access_id);
 
+    const accounts = await user.getAccounts({
+      include: [{ all: true, nested: true }],
+    });
+
     const { email, id, roles } = user;
 
     const accessToken = this.jwt.sign(
-      { email, id, roles },
+      { accounts, email, id, roles },
       {
         expiresIn: nconf.get("cookies.accessExpiration"),
       }
@@ -286,6 +323,7 @@ async function postRegister(req, res) {
 module.exports = {
   postAuthApple,
   postAuthFacebook,
+  postForgot,
   postLogin,
   postLogout,
   postPasswordReset,

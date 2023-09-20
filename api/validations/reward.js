@@ -118,10 +118,7 @@ const validatePostReward = {
       }
     },
     async function (req) {
-      const { accounts } = req.user
-      const { accountId } = req.body
-
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = await Reward.canAccess({ req })
 
       if (!canAccess) {
         throw new Error('Not a member of the account')

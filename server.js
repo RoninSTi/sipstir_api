@@ -41,31 +41,50 @@ const createServer = (options) => {
 
   server.register(cookie);
 
-  server.register(require("@fastify/cors"), {
-    credentials: true,
-    origin: (origin, cb) => {
-      server.log.info(origin);
-      const hostname = new URL(origin).hostname;
+  server.register(require("@fastify/cors"), (instance) => {
+    return (req, callback) => {
+      const corsOptions = {
+        // This is NOT recommended for production as it enables reflection exploits
+        origin: true,
+        credentials: true,
+      };
 
-      if (hostname === "localhost") {
-        //  Request from localhost will pass
-        cb(null, true);
-        return;
+      // do not include CORS headers for requests from localhost
+      if (/^localhost$/m.test(req.headers.origin)) {
+        corsOptions.origin = false;
       }
 
-      if (hostname === "staging-business.sipstir.app") {
-        cb(null, true);
-        return;
-      }
-
-      if (hostname === "business.sipstir.app") {
-        cb(null, true);
-        return;
-      }
-      // Generate an error on other origins, disabling access
-      cb(new Error("Not allowed"), false);
-    },
+      // callback expects two parameters: error and options
+      callback(null, corsOptions);
+    };
   });
+
+  // server.register(require("@fastify/cors"), {
+  //   credentials: true,
+  //   origin: (req, cb) => {
+  //     server.log.info(req);
+  //     console.log({ req });
+  //     const hostname = new URL(origin).hostname;
+
+  //     if (hostname === "localhost") {
+  //       //  Request from localhost will pass
+  //       cb(null, true);
+  //       return;
+  //     }
+
+  //     if (hostname === "staging-business.sipstir.app") {
+  //       cb(null, true);
+  //       return;
+  //     }
+
+  //     if (hostname === "business.sipstir.app") {
+  //       cb(null, true);
+  //       return;
+  //     }
+  //     // Generate an error on other origins, disabling access
+  //     cb(new Error("Not allowed"), false);
+  //   },
+  // });
 
   server.register(AutoLoad, {
     dir: path.join(__dirname, "api", "routes"),

@@ -171,7 +171,7 @@ async function getActivity(req, res) {
     const sortedActivities = rawResponse.slice().sort((a, b) => b.sortDate - a.sortDate);
 
     const response = sortedActivities.map(activity => {
-      const createdBy = users.find(u => u.id === activity.createdById).toJSON();
+      const createdBy = users.find(u => u.id === activity.createdById)?.toJSON();
 
       const onClick = () => {
         switch (activity.verb) {

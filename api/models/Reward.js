@@ -40,7 +40,7 @@ class Reward extends Model {
 
     const reward = await this.findByPk(rewardId)
 
-    const canAccess = accounts.some(account => account.accountId === reward.accountId)
+    const canAccess = accounts.some(account => account.id === reward.accountId)
 
     return canAccess
   }

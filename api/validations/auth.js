@@ -24,6 +24,19 @@ const validatePostAuthFacebook = {
   },
 };
 
+const validatePostForgot = {
+  body: {
+    type: "object",
+    properties: {
+      email: {
+        type: "string",
+        format: "email"
+      },
+    },
+    required: ["email"],
+  },
+};
+
 const validatePostLogin = {
   preHandler: [
     async function (req) {
@@ -108,6 +121,7 @@ const validatePostRegister = {
 module.exports = {
   validatePostAuthApple,
   validatePostAuthFacebook,
+  validatePostForgot,
   validatePostLogin,
   validatePostLogout,
   validatePostPasswordReset,

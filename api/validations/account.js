@@ -277,7 +277,7 @@ const validatePutAccount = {
       const isEmployee = roles.some(role => role === 'employee')
 
       if (!isEmployee) {
-        const canAccess = accounts.some(account => account.accountId === accountId)
+        const canAccess = accounts.some(account => account.id === accountId)
 
         if (!canAccess) {
           throw new Error('Not a member of the account')

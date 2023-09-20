@@ -1,6 +1,7 @@
 const {
   validatePostAuthApple,
   validatePostAuthFacebook,
+  validatePostForgot,
   validatePostLogin,
   validatePostLogout,
   validatePostPasswordReset,
@@ -9,6 +10,7 @@ const {
 const {
   postAuthApple,
   postAuthFacebook,
+  postForgot,
   postLogin,
   postLogout,
   postPasswordReset,
@@ -19,6 +21,7 @@ const {
 module.exports = async (fastify) => {
   fastify.post("/auth/apple", validatePostAuthApple, postAuthApple);
   fastify.post("/auth/facebook", validatePostAuthFacebook, postAuthFacebook);
+  fastify.post("/auth/forgot", validatePostForgot, postForgot);
   fastify.post("/auth/login", validatePostLogin, postLogin);
   fastify.post("/auth/logout", validatePostLogout, postLogout);
   fastify.post("/auth/register", validatePostRegister, postRegister);
