@@ -40,8 +40,6 @@ class Location extends Model {
 
       const { result: googlePlace } = responseJSON;
 
-      console.log({ googlePlace });
-
       const photos = googlePlace.photos || []
 
       let photo = null
