@@ -19,6 +19,7 @@ const { User } = require('../models/User');
 
 const sequelize = new Sequelize(process.env.JAWSDB_URL, {
   dialect: 'postgres',
+  sslmode: 'require',
   // dialectModule: pg,
   define: {
     charset: "utf8mb4",
