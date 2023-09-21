@@ -2,7 +2,7 @@ const aws = require('aws-sdk');
 const nconf = require('nconf');
 
 const getSignedUrl = async ({ fileName, fileType }) => {
-  const S3_BUCKET = nconf.get('keys.amazon.bucket');
+  const S3_BUCKET = process.env.AWS_BUCKET;
 
   const s3 = new aws.S3();
 
@@ -31,7 +31,7 @@ const getSignedUrl = async ({ fileName, fileType }) => {
 };
 
 const getSignedImageUrl = async ({ fileName, fileType }) => {
-  const S3_BUCKET = nconf.get('keys.amazon.bucket');
+  const S3_BUCKET = process.env.AWS_BUCKET;
 
   const s3 = new aws.S3();
 

@@ -89,9 +89,7 @@ async function postForgot(req, res) {
       from: "Sipstir Business <no-reply@sipstir.app>",
       to: email,
       subject: "Reset Password for Sipstir Business",
-      text: `Reset your password by following this link: ${nconf.get(
-        "app.authCallbackHost"
-      )}/reset?otp=${user.otp}`,
+      text: `Reset your password by following this link: ${process.env.AUTH_CALLBACK_HOST}/reset?otp=${user.otp}`,
     };
 
     await this.mg.messages().send(data);
@@ -120,39 +118,39 @@ async function postLogin(req, res) {
 
     const accessToken = this.jwt.sign(
       { accounts, avatar, email, id, roles, username },
-      {
-        expiresIn: nconf.get("cookies.accessExpiration"),
-      }
+      // {
+      //   expiresIn: nconf.get("cookies.accessExpiration"),
+      // }
     );
 
     const refreshToken = this.jwt.sign(
       {
         id,
       },
-      {
-        expiresIn: nconf.get("cookies.refreshExpiration"),
-      }
+      // {
+      //   expiresIn: nconf.get("cookies.refreshExpiration"),
+      // }
     );
 
     res
       .setCookie("access_token", accessToken, {
-        domain: nconf.get("cookies.host"),
+        // domain: nconf.get("cookies.host"),
         path: "/",
-        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
         httpOnly: true,
         sameSite: true, // alternative CSRF protection
       })
       .setCookie("refresh_token", refreshToken, {
-        domain: nconf.get("cookies.host"),
+        // domain: nconf.get("cookies.host"),
         path: "/",
-        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
         httpOnly: true,
         sameSite: true, // alternative CSRF protection
       })
       .setCookie("logged_in", true, {
-        domain: nconf.get("cookies.host"),
+        // domain: nconf.get("cookies.host"),
         path: "/",
-        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
         httpOnly: false,
         sameSite: true,
       })
@@ -168,25 +166,25 @@ async function postLogin(req, res) {
 async function postLogout(req, res) {
   res
     .setCookie("access_token", "", {
-      domain: nconf.get("cookies.host"),
+      // domain: nconf.get("cookies.host"),
       path: "/",
-      secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+      // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
       httpOnly: true,
       sameSite: true, // alternative CSRF protection
       maxAge: -1,
     })
     .setCookie("refresh_token", "", {
-      domain: nconf.get("cookies.host"),
+      // domain: nconf.get("cookies.host"),
       path: "/",
-      secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+      // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
       httpOnly: true,
       sameSite: true, // alternative CSRF protection
       maxAge: -1,
     })
     .setCookie("logged_in", "", {
-      domain: nconf.get("cookies.host"),
+      // domain: nconf.get("cookies.host"),
       path: "/",
-      secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+      // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
       httpOnly: false,
       sameSite: true,
       maxAge: -1,
@@ -249,7 +247,7 @@ async function postRefresh(req, res) {
     const accessToken = this.jwt.sign(
       { accounts, email, id, roles },
       {
-        expiresIn: nconf.get("cookies.accessExpiration"),
+        // expiresIn: nconf.get("cookies.accessExpiration"),
       }
     );
 
@@ -258,29 +256,29 @@ async function postRefresh(req, res) {
         id,
       },
       {
-        expiresIn: nconf.get("cookies.refreshExpiration"),
+        // expiresIn: nconf.get("cookies.refreshExpiration"),
       }
     );
 
     res
       .setCookie("access_token", accessToken, {
-        domain: nconf.get("cookies.host"),
+        // domain: nconf.get("cookies.host"),
         path: "/",
-        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
         httpOnly: true,
         sameSite: true, // alternative CSRF protection
       })
       .setCookie("refresh_token", refreshToken, {
-        domain: nconf.get("cookies.host"),
+        // domain: nconf.get("cookies.host"),
         path: "/",
-        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
         httpOnly: true,
         sameSite: true, // alternative CSRF protection
       })
       .setCookie("logged_in", true, {
-        domain: nconf.get("cookies.host"),
+        // domain: nconf.get("cookies.host"),
         path: "/",
-        secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
+        // secure: nconf.get("cookies.secure"), // send cookie over HTTPS only
         httpOnly: false,
         sameSite: true,
       })

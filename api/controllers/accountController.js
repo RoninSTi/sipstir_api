@@ -33,9 +33,7 @@ async function addUserToAccount({ accountId, email, mg, role }) {
     from: "Sipstir Business <no-reply@sipstir.app>",
     to: email,
     subject: "Welcome to Sipstir Business",
-    text: `Thank you for joining Sipstir Business.  Please verify your email and continue the setup process by following this link: ${nconf.get(
-      "app.authCallbackHost"
-    )}/verify?otp=${user.otp}`,
+    text: `Thank you for joining Sipstir Business.  Please verify your email and continue the setup process by following this link: ${process.env.AUTH_CALLBACK_HOST}/verify?otp=${user.otp}`,
   };
 
   await mg.messages().send(data);

@@ -1,19 +1,13 @@
-const nconf = require("nconf");
+require("dotenv").config();
+
 const server = require("./server");
 
-const { loadSettings } = require("./config/configurationAdaptor");
+const db = require("./api/db/db");
 
-const appSettingsPath = process.env.APP_SETTINGS_FILE_PATH;
-
-loadSettings({ appSettingsPath })
-  .then(() => {
-    const db = require("./api/db/db");
-
-    return db.sequelize.sync({ alter: true });
-  })
+return db.sequelize.sync({ alter: true })
   .then(() => {
     const serverOptions = {
-      logSeverity: nconf.get("logSeverity"),
+      logSeverity: process.env.LOG_SEVERITY,
     };
 
     server.createServer(serverOptions);

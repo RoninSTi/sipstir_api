@@ -32,7 +32,7 @@ const createServer = (options) => {
     });
 
   server.register(jwt, {
-    secret: nconf.get("jwt.secret"),
+    secret: process.env.JWT_SECRET,
     cookie: {
       cookieName: "access_token",
       signed: false,
@@ -59,65 +59,36 @@ const createServer = (options) => {
     };
   });
 
-  // server.register(require("@fastify/cors"), {
-  //   credentials: true,
-  //   origin: (req, cb) => {
-  //     server.log.info(req);
-  //     console.log({ req });
-  //     const hostname = new URL(origin).hostname;
-
-  //     if (hostname === "localhost") {
-  //       //  Request from localhost will pass
-  //       cb(null, true);
-  //       return;
-  //     }
-
-  //     if (hostname === "staging-business.sipstir.app") {
-  //       cb(null, true);
-  //       return;
-  //     }
-
-  //     if (hostname === "business.sipstir.app") {
-  //       cb(null, true);
-  //       return;
-  //     }
-  //     // Generate an error on other origins, disabling access
-  //     cb(new Error("Not allowed"), false);
-  //   },
-  // });
-
   server.register(AutoLoad, {
     dir: path.join(__dirname, "api", "routes"),
   });
 
   const client = stream.default.connect(
-    nconf.get("keys.stream.key"),
-    nconf.get("keys.stream.secret"),
-    nconf.get("keys.stream.appId"),
+    process.env.STREAM_KEY,
+    process.env.STREAM_SECRET,
+    process.env.STREAM_APP_ID,
     { location: "us-east" }
   );
 
   server.decorate("client", client);
 
-  const STRIPE_KEY = nconf.get("keys.stripe.secret");
-  const stripe = require("stripe")(STRIPE_KEY, { apiVersion: "" });
+  const stripe = require("stripe")(process.env.STRIPE_SECRET, {
+    apiVersion: "",
+  });
   server.decorate("stripe", stripe);
 
   const aws = require("aws-sdk");
 
-  const AWS_ACCESS_KEY_ID = nconf.get("keys.amazon.AWSAccessKeyId");
-  const AWS_SECRET_KEY = nconf.get("keys.amazon.AWSSecretKey");
-
   aws.config.update({
     region: "us-east-2",
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_KEY,
+    accessKeyId: process.env.API_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.API_AWS_SECRET_KEY,
     signatureVersion: "v4",
   });
 
   const mg = mailgun({
-    apiKey: nconf.get("keys.mailgun.key"),
-    domain: nconf.get("keys.mailgun.domain"),
+    apiKey: process.env.MAILGUN_KEY,
+    domain: process.env.MAILGUN_DOMAIN,
   });
 
   server.decorate("mg", mg);
