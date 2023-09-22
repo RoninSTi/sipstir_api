@@ -17,10 +17,9 @@ const { RewardRedemption } = require('../models/RewardRedemption');
 const { Subscription } = require('../models/Subscription');
 const { User } = require('../models/User');
 
-const sequelize = new Sequelize(process.env.JAWSDB_URL, {
+const sequelize = new Sequelize(process.env.DATABASE_URI, {
   dialect: 'postgres',
   sslmode: 'require',
-  // dialectModule: pg,
   define: {
     charset: "utf8mb4",
     collate: "utf8mb4_unicode_ci",

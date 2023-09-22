@@ -8,3 +8,4 @@ config/appSettings.staging.json
 
 #env
 .env
+ncmanifest.json
