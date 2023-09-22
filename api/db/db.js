@@ -32,7 +32,8 @@ const config = {
 if (process.env.NODE_ENV === 'production') {
   config.dialectOptions.ssl = {
     require: true,
-    ca: fs.readFileSync(`${__dirname}/SSLCA.pem`),
+    // ca: fs.readFileSync(`${__dirname}/SSLCA.pem`),
+    rejectUnauthorized: false
   }
 }
 
