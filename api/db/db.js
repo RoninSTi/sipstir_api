@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 
+const fs = require('fs');
+
 const { Account } = require('../models/Account');
 const { AccountUser } = require('../models/AccountUser');
 const { BlockedUser } = require('../models/BlockedUser');

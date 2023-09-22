@@ -24,7 +24,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/.expo/settings.json"
   },
   ".gitignore": {
-    "mt": "Fri Sep 22 2023 11:33:55 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Fri Sep 22 2023 12:26:36 GMT-0400 (Eastern Daylight Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/.gitignore"
@@ -203,8 +203,14 @@
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/controllers/verifyController.js"
   },
+  "api/db/SSLCA.pem": {
+    "mt": "Fri Sep 22 2023 12:25:26 GMT-0400 (Eastern Daylight Time)",
+    "exists": true,
+    "state": 1,
+    "path": "/Users/craigcronin/Development/sipstir_api/api/db/SSLCA.pem"
+  },
   "api/db/db.js": {
-    "mt": "Fri Sep 22 2023 11:43:28 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Fri Sep 22 2023 12:29:28 GMT-0400 (Eastern Daylight Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/db/db.js"
