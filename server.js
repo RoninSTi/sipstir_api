@@ -3,7 +3,6 @@ const AutoLoad = require("fastify-autoload");
 
 const jwt = require("@fastify/jwt");
 const cookie = require("@fastify/cookie");
-const nconf = require("nconf");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const stream = require("getstream");

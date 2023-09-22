@@ -17,15 +17,24 @@ const { RewardRedemption } = require('../models/RewardRedemption');
 const { Subscription } = require('../models/Subscription');
 const { User } = require('../models/User');
 
-const sequelize = new Sequelize(process.env.DATABASE_URI, {
-  dialect: 'postgres',
-  sslmode: 'require',
+const config = {
+  dialect: "postgres",
+  dialectOptions: {},
   define: {
     charset: "utf8mb4",
     collate: "utf8mb4_unicode_ci",
     timestamps: true,
   },
-});
+};
+
+if (process.env.NODE_ENV === 'production') {
+  config.dialectOptions.ssl = {
+    require: true,
+    ca: fs.readFileSync(`${__dirname}/SSLCA.pem`),
+  }
+}
+
+const sequelize = new Sequelize(process.env.DATABASE_URI, config);
 
 const models = {
   Account: Account.init(sequelize, Sequelize),

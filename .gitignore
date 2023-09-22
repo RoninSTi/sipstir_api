@@ -9,3 +9,7 @@ config/appSettings.staging.json
 #env
 .env
 ncmanifest.json
+
+#ssl
+api/db/SSLCA.pem
+
