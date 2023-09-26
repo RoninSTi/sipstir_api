@@ -16,7 +16,7 @@ class User extends Model {
     return super.init(
       {
         avatar: DataTypes.STRING,
-        email: DataTypes.STRING(126).BINARY,
+        email: DataTypes.STRING,
         otp: DataTypes.STRING,
         password: {
           type: DataTypes.STRING,
@@ -61,7 +61,7 @@ class User extends Model {
             this.setDataValue("settings", JSON.stringify(value));
           },
         },
-        username: DataTypes.STRING(126).BINARY,
+        username: DataTypes.STRING,
       },
       {
         hooks: {

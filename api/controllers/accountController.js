@@ -6,7 +6,6 @@ const {
   Subscription,
   User,
 } = require("../db/db");
-const nconf = require("nconf");
 
 async function addUserToAccount({ accountId, email, mg, role }) {
   const [user, created] = await User.findOrCreate({
