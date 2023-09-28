@@ -80,7 +80,7 @@ async function getFeed(req, res) {
 
       var location = sequelize.literal(`ST_GeomFromText('POINT(${lng} ${lat})')`);
 
-      var distance = sequelize.fn('ST_Distance_Sphere', sequelize.literal('geometry'), location);
+      var distance = sequelize.fn('ST_DistanceSphere', sequelize.literal('geometry'), location);
 
       attributes.push([distance, 'distance']);
 
@@ -94,7 +94,7 @@ async function getFeed(req, res) {
       query = {
         ...query,
         where: {
-          locationId: [locationIds]
+          locationId: locationIds
         }
       }
     }

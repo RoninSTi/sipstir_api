@@ -96,7 +96,7 @@ async function getRewards(req, res) {
       );
 
       var distance = sequelize.fn(
-        "ST_Distance_Sphere",
+        "ST_DistanceSphere",
         sequelize.literal("geometry"),
         location
       );

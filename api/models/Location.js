@@ -52,11 +52,7 @@ class Location extends Model {
 
       const { lat, lng } = googlePlace.geometry.location
 
-      console.log({ location: googlePlace.geometry.location });
-
       const geometry = { type: 'Point', coordinates: [lng, lat] }
-
-      console.log({ geometry })
 
       const locationData = {
         name: googlePlace.name,
