@@ -18,17 +18,11 @@ async function postAuthApple(req, res) {
       redis: this.redis,
     });
 
-    const { id: userId, roles } = user;
+    const { avatar, id: userId, roles, username } = user;
 
-    const accessToken = this.jwt.sign({ email, id: userId, roles });
+    const accessToken = this.jwt.sign({ avatar, email, id: userId, roles, username });
 
-    const userResponse = await User.getSingle({
-      client: this.client,
-      id: userId,
-      redis: this.redis,
-    });
-
-    res.send({ accessToken, user: userResponse });
+    res.send({ accessToken });
   } catch (error) {
     res.send(error);
   }
@@ -57,17 +51,11 @@ async function postAuthFacebook(req, res) {
       avatar: picture.data.url,
     });
 
-    const { id: userId, roles } = user;
+    const { avatar, id: userId, roles, username } = user;
 
-    const accessToken = this.jwt.sign({ email, id: userId, roles });
+    const accessToken = this.jwt.sign({ avatar, email, id: userId, roles, username });
 
-    const userResponse = await User.getSingle({
-      client: this.client,
-      id: userId,
-      redis: this.redis,
-    });
-
-    res.send({ accessToken, user: userResponse });
+    res.send({ accessToken });
   } catch (error) {
     res.send(error);
   }

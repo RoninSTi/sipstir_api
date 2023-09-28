@@ -120,7 +120,7 @@ class User extends Model {
     if (created) {
       await user.addPoints({ amount: 0, redis });
 
-      await user.setDefaultAvatar();
+      if (!userData?.avatar) await user.setDefaultAvatar();
 
       await client.user(`${user.id}`).getOrCreate();
 
@@ -136,7 +136,6 @@ class User extends Model {
     if (userData) {
       Object.keys(userData).forEach((key) => {
         if (!user.getDataValue(key)) {
-          console.log("updating");
           user[key] = userData[key];
         } else {
           return null;
