@@ -16,9 +16,9 @@ async function addUserToAccount({ accountId, email, mg, role }) {
 
   if (created) {
     await user.setDefaultAvatar();
+    await user.setOtp();
   }
 
-  await user.setOtp();
 
   const [accountUser] = await AccountUser.findOrCreate({
     where: {
@@ -28,11 +28,13 @@ async function addUserToAccount({ accountId, email, mg, role }) {
     },
   });
 
+  const text = created ? `Thank you for joining Sipstir Business.  Please verify your email and continue the setup process by following this link: ${process.env.AUTH_CALLBACK_HOST}/verify?otp=${user.otp}` : 'Thank you for joining Sipstir Business.  Please login using your existing credentials.'
+
   const data = {
     from: "Sipstir Business <no-reply@sipstir.app>",
     to: email,
     subject: "Welcome to Sipstir Business",
-    text: `Thank you for joining Sipstir Business.  Please verify your email and continue the setup process by following this link: ${process.env.AUTH_CALLBACK_HOST}/verify?otp=${user.otp}`,
+    text,
   };
 
   await mg.messages().send(data);

@@ -10,6 +10,7 @@ const stream = require("getstream");
 const mailgun = require("mailgun-js");
 
 const { Points } = require("./api/db/db");
+const { truncate } = require("lodash");
 
 const createRequestId = () => uuidv4();
 
@@ -45,16 +46,16 @@ const createServer = (options) => {
       const corsOptions = {
         // This is NOT recommended for production as it enables reflection exploits
         origin: true,
-        credentials: true,
+        credentials: true
       };
-
+  
       // do not include CORS headers for requests from localhost
       if (/^localhost$/m.test(req.headers.origin)) {
-        corsOptions.origin = false;
+        corsOptions.origin = false
       }
-
+  
       // callback expects two parameters: error and options
-      callback(null, corsOptions);
+      callback(null, corsOptions)
     };
   });
 
