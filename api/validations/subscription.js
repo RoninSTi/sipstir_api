@@ -22,13 +22,13 @@ const validateDeleteSubscription = {
 
       const subscription = await Subscription.findByPk(subscriptionId);
 
-      const canAccess = accounts.some(account => account.accountId === subscription.accountId)
+      const canAccess = accounts.some(account => account.id === subscription.accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')
       }
 
-      const isSuperAdmin = accounts.some(account => account.accountId === subscription.accountId && account.role === 'super-admin')
+      const isSuperAdmin = accounts.some(account => account.id === subscription.accountId && account.AccountUser.role === 'super-admin')
 
       if (!isSuperAdmin) {
         throw new Error('Super admin function')
@@ -66,13 +66,13 @@ const validatePostSubscription = {
       const { accounts } = req.user
       const { accountId } = req.body
 
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = accounts.some(account => account.id === accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')
       }
 
-      const isSuperAdmin = accounts.some(account => account.accountId === accountId && account.role === 'super-admin')
+      const isSuperAdmin = accounts.some(account => account.id === accountId && account.AccountUser.role === 'super-admin')
 
       if (!isSuperAdmin) {
         throw new Error('Super admin function')

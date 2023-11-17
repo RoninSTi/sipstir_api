@@ -96,7 +96,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/adaptors/stripeAdaptor.js"
   },
   "api/controllers/accountController.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Tue Nov 07 2023 20:35:12 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/controllers/accountController.js"
@@ -558,7 +558,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/package.json"
   },
   "server.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Tue Nov 07 2023 20:30:59 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/server.js"

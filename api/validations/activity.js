@@ -20,7 +20,7 @@ const validateGetAccountActivity = {
       const { accounts } = req.user
       const { accountId } = req.params
 
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = accounts.some(account => account.id === accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')

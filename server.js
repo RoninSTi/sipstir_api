@@ -25,6 +25,8 @@ const createServer = (options) => {
     },
   });
 
+  server.register(require('@fastify/formbody'));
+
   server
     .register(require("fastify-redis"), { url: process.env.REDIS_URL })
     .after(() => {

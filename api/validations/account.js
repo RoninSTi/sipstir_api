@@ -48,7 +48,7 @@ const validateDeleteAccountUser = {
       const { accounts } = req.user
       const { accountId } = req.params
 
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = accounts.some(account => account.id === accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')
@@ -105,7 +105,7 @@ const validateGetPaymentMethod = {
       const { accounts } = req.user
       const { accountId } = req.params
 
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = accounts.some(account => account.id === accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')
@@ -145,7 +145,7 @@ const validateGetSubscription = {
       const { accounts } = req.user
       const { accountId } = req.params
 
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = accounts.some(account => account.id === accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')
@@ -228,7 +228,7 @@ const validatePostAccountUserAdd = {
       const { accounts } = req.user
       const { accountId } = req.params
 
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = accounts.some(account => account.id === accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')
@@ -330,7 +330,7 @@ const validatePutAccountUser = {
       const { accounts } = req.user
       const { accountId } = req.params
 
-      const canAccess = accounts.some(account => account.accountId === accountId)
+      const canAccess = accounts.some(account => account.id === accountId)
 
       if (!canAccess) {
         throw new Error('Not a member of the account')

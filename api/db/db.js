@@ -7,6 +7,7 @@ const { AccountUser } = require('../models/AccountUser');
 const { BlockedUser } = require('../models/BlockedUser');
 const { Cheer } = require('../models/Cheer');
 const { Comment } = require('../models/Comment');
+const { DeletionRecord } = require('../models/DeletionRecord');
 const { Guess } = require('../models/Guess');
 const { Location } = require('../models/Location');
 const { Member } = require('../models/Member');
@@ -45,6 +46,7 @@ const models = {
   BlockedUser: BlockedUser.init(sequelize, Sequelize),
   Comment: Comment.init(sequelize, Sequelize),
   Cheer: Cheer.init(sequelize, Sequelize),
+  DeletionRecord: DeletionRecord.init(sequelize, Sequelize),
   Guess: Guess.init(sequelize, Sequelize),
   Location: Location.init(sequelize, Sequelize),
   Member: Member.init(sequelize, Sequelize),

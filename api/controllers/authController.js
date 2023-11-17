@@ -1,8 +1,10 @@
 const jwtDecode = require("jwt-decode");
-const { User } = require("../db/db");
-const nconf = require("nconf");
 
-const { getMe, getUser } = require("../adaptors/facebookAdaptor");
+const { DeletionRecord, User } = require("../db/db");
+
+const { v4: uuidv4 } = require("uuid");
+
+const { getMe, getUser, parseSignedRequest } = require("../adaptors/facebookAdaptor");
 
 async function postAuthApple(req, res) {
   const { identityToken } = req.body;
@@ -20,7 +22,13 @@ async function postAuthApple(req, res) {
 
     const { avatar, id: userId, roles, username } = user;
 
-    const accessToken = this.jwt.sign({ avatar, email, id: userId, roles, username });
+    const accessToken = this.jwt.sign({
+      avatar,
+      email,
+      id: userId,
+      roles,
+      username,
+    });
 
     res.send({ accessToken });
   } catch (error) {
@@ -49,16 +57,47 @@ async function postAuthFacebook(req, res) {
       email,
       redis: this.redis,
       avatar: picture.data.url,
+      fbUserId: id,
     });
 
     const { avatar, id: userId, roles, username } = user;
 
-    const accessToken = this.jwt.sign({ avatar, email, id: userId, roles, username });
+    const accessToken = this.jwt.sign({
+      avatar,
+      email,
+      id: userId,
+      roles,
+      username,
+    });
 
     res.send({ accessToken });
   } catch (error) {
     res.send(error);
   }
+}
+
+async function postDataDelete(req, res) {
+  const { signed_request } = req.body;
+
+  const { user_id } = parseSignedRequest(signed_request, process.env.FACEBOOK_SECRET);
+
+  await User.destroy({
+    where: {
+      fbUserId: user_id
+    }
+  });
+
+  const deletionRecord = await DeletionRecord.findOrCreate({
+    where: {
+      fbUserId: user_id,
+      code: uuidv4(),
+    }
+  });
+
+  res.send({
+    code: deletionRecord.code,
+    url: `${process.env.AUTH_CALLBACK_HOST}/datadelete?code=${deletionRecord.code}`
+  })
 }
 
 async function postForgot(req, res) {
@@ -105,7 +144,7 @@ async function postLogin(req, res) {
     const { id, roles, username, avatar } = user;
 
     const accessToken = this.jwt.sign(
-      { accounts, avatar, email, id, roles, username },
+      { accounts, avatar, email, id, roles, username }
       // {
       //   expiresIn: nconf.get("cookies.accessExpiration"),
       // }
@@ -114,7 +153,7 @@ async function postLogin(req, res) {
     const refreshToken = this.jwt.sign(
       {
         id,
-      },
+      }
       // {
       //   expiresIn: nconf.get("cookies.refreshExpiration"),
       // }
@@ -309,6 +348,7 @@ async function postRegister(req, res) {
 module.exports = {
   postAuthApple,
   postAuthFacebook,
+  postDataDelete,
   postForgot,
   postLogin,
   postLogout,

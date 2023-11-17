@@ -116,13 +116,6 @@ const validatePostReward = {
       if (!account) {
         throw new Error('Account does not exist');
       }
-    },
-    async function (req) {
-      const canAccess = await Reward.canAccess({ req })
-
-      if (!canAccess) {
-        throw new Error('Not a member of the account')
-      }
     }
   ],
   schema: {

@@ -20,6 +20,7 @@
   "dependencies": {
     "@fastify/cookie": "^7.0.0",
     "@fastify/cors": "^8.0.0",
+    "@fastify/formbody": "^7.4.0",
     "@fastify/jwt": "^6.1.0",
     "aws-sdk": "^2.701.0",
     "crypto": "^1.0.1",

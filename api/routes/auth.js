@@ -10,6 +10,7 @@ const {
 const {
   postAuthApple,
   postAuthFacebook,
+  postDataDelete,
   postForgot,
   postLogin,
   postLogout,
@@ -31,4 +32,5 @@ module.exports = async (fastify) => {
     postPasswordReset
   );
   fastify.post("/auth/refresh", postRefresh);
+  fastify.post("/auth/datadelete", postDataDelete);
 };
