@@ -12,7 +12,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/.editorconfig"
   },
   ".env": {
-    "mt": "Tue Sep 26 2023 21:35:27 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:43:26 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/.env"
@@ -78,7 +78,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/adaptors/amazonAdaptor.js"
   },
   "api/adaptors/facebookAdaptor.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:42:23 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/adaptors/facebookAdaptor.js"
@@ -108,7 +108,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/controllers/activityController.js"
   },
   "api/controllers/authController.js": {
-    "mt": "Wed Sep 27 2023 21:56:50 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 21:02:53 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/controllers/authController.js"
@@ -204,7 +204,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/controllers/verifyController.js"
   },
   "api/db/db.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:56:54 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/db/db.js"
@@ -238,6 +238,12 @@
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/models/Comment.js"
+  },
+  "api/models/DeletionRecord.js": {
+    "mt": "Wed Nov 08 2023 20:53:16 GMT-0500 (Eastern Standard Time)",
+    "exists": true,
+    "state": 1,
+    "path": "/Users/craigcronin/Development/sipstir_api/api/models/DeletionRecord.js"
   },
   "api/models/Errors.js": {
     "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
@@ -288,7 +294,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/models/ReportedPost.js"
   },
   "api/models/Reward.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Tue Nov 14 2023 14:08:11 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/models/Reward.js"
@@ -306,7 +312,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/models/Subscription.js"
   },
   "api/models/User.js": {
-    "mt": "Wed Sep 27 2023 22:38:43 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:31:01 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/models/User.js"
@@ -324,7 +330,7 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/routes/activity.js"
   },
   "api/routes/auth.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:36:44 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/routes/auth.js"
@@ -438,13 +444,13 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/utils/stream.js"
   },
   "api/validations/account.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Tue Nov 14 2023 15:39:47 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/validations/account.js"
   },
   "api/validations/activity.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 15 2023 00:31:23 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/validations/activity.js"
@@ -498,13 +504,13 @@
     "path": "/Users/craigcronin/Development/sipstir_api/api/validations/post.js"
   },
   "api/validations/reward.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Tue Nov 14 2023 14:08:37 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/validations/reward.js"
   },
   "api/validations/subscription.js": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Tue Nov 14 2023 15:25:22 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/api/validations/subscription.js"
@@ -540,25 +546,25 @@
     "path": "/Users/craigcronin/Development/sipstir_api/docker-compose.yml"
   },
   "ncmanifest.json": {
-    "mt": "Tue Sep 26 2023 21:35:08 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:44:46 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/ncmanifest.json"
   },
   "package-lock.json": {
-    "mt": "Tue Sep 26 2023 19:51:53 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:35:36 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/package-lock.json"
   },
   "package.json": {
-    "mt": "Tue Sep 26 2023 19:43:25 GMT-0400 (Eastern Daylight Time)",
+    "mt": "Wed Nov 08 2023 20:35:36 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/package.json"
   },
   "server.js": {
-    "mt": "Tue Nov 07 2023 20:30:59 GMT-0500 (Eastern Standard Time)",
+    "mt": "Wed Nov 08 2023 20:35:21 GMT-0500 (Eastern Standard Time)",
     "exists": true,
     "state": 1,
     "path": "/Users/craigcronin/Development/sipstir_api/server.js"
